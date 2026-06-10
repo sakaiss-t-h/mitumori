@@ -1,0 +1,1568 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>見積書作成</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Meiryo','Hiragino Kaku Gothic ProN',sans-serif;font-size:14px;background:#eef4fb;color:#1a1a1a;min-height:100vh}
+a{color:inherit}
+
+/* レイアウト */
+.app-header{background:#1565c0;border-bottom:none;padding:0 24px;height:54px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200}
+.app-header-left{display:flex;align-items:center;gap:16px}
+.app-title{font-size:16px;font-weight:600;color:#fff}
+.estimate-no{font-size:12px;color:#90caf9;background:rgba(255,255,255,.12);padding:3px 10px;border-radius:4px}
+.app-header-right{display:flex;gap:8px}
+
+.main{max-width:900px;margin:0 auto;padding:20px 16px 80px}
+.section{background:#fff;border:1px solid #c5d9f0;border-radius:10px;padding:20px;margin-bottom:16px}
+.section-title{font-size:14px;font-weight:600;margin-bottom:16px;display:flex;align-items:center;gap:8px;color:#1565c0;border-bottom:2px solid #e3f2fd;padding-bottom:10px}
+.section-title svg{flex-shrink:0;color:#1976d2}
+
+/* フォーム */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.form-grid.three{grid-template-columns:1fr 1fr 1fr}
+.form-group{display:flex;flex-direction:column;gap:5px}
+.form-group.full{grid-column:1/-1}
+.form-label{font-size:11px;color:#5c7a9e;font-weight:500}
+.form-label .default-tag{font-size:10px;background:#e8f4e8;color:#2e7d32;padding:1px 5px;border-radius:3px;margin-left:4px}
+.form-input{padding:7px 10px;font-size:13px;border:1px solid #b8d0ea;border-radius:6px;background:#f5f9ff;color:#1a1a1a;width:100%;transition:border-color .15s,background .15s}
+.form-input:focus{outline:none;border-color:#1976d2;background:#fff}
+.form-input:hover{border-color:#7bafd4;background:#fff}
+textarea.form-input{resize:none;height:52px}
+.koki-row{display:flex;align-items:center;gap:8px}
+.koki-row input{flex:1}
+.koki-sep{font-size:12px;color:#888;white-space:nowrap}
+.divider{border:none;border-top:1px solid #ddeaf7;margin:16px 0}
+.tax-row{display:flex;align-items:center;gap:10px}
+.tax-row label{font-size:12px;color:#5c7a9e;white-space:nowrap}
+.tax-row select{width:auto;padding:5px 8px;font-size:13px;border:1px solid #b8d0ea;border-radius:6px;background:#f5f9ff;cursor:pointer}
+
+/* カテゴリブロック */
+.cat-block{border:1px solid #c5d9f0;border-radius:8px;margin-bottom:12px;overflow:visible}
+.cat-header{background:#ddeaf7;padding:8px 12px;display:flex;align-items:center;gap:8px;border-radius:8px 8px 0 0;border-bottom:1px solid #c5d9f0;position:relative}
+.cat-no{font-size:11px;color:#7bafd4;min-width:28px;flex-shrink:0}
+.cat-input-wrap{flex:1;position:relative}
+.cat-input{width:100%;font-size:13px;font-weight:600;background:#fff;border:1px solid #b8d0ea;border-radius:6px;padding:5px 28px 5px 9px;color:#1565c0;cursor:pointer;transition:border-color .15s}
+.cat-input:focus{outline:none;border-color:#1976d2}
+.cat-chevron{position:absolute;right:8px;top:50%;transform:translateY(-50%);font-size:12px;color:#7bafd4;pointer-events:none}
+.cat-dropdown{position:absolute;top:calc(100% + 4px);left:0;right:0;background:#fff;border:1px solid #b8d0ea;border-radius:8px;z-index:300;overflow:hidden;box-shadow:0 4px 16px rgba(25,118,210,.12);display:none;min-width:180px}
+.cat-dropdown.open{display:block}
+.dd-item{padding:8px 14px;font-size:13px;cursor:pointer;display:flex;align-items:center;gap:8px;border-bottom:1px solid #eef4fb;color:#1a1a1a}
+.dd-item:last-child{border-bottom:none}
+.dd-item:hover,.dd-item.active{background:#ddeaf7;color:#1565c0}
+.dd-item.new-item{color:#888;font-style:italic;border-top:1px solid #eee}
+.dd-item.new-item:hover{background:#e8f5e9;color:#2e7d32}
+.cat-del-btn{background:none;border:1px solid #b8d0ea;border-radius:6px;color:#7bafd4;cursor:pointer;padding:4px 7px;display:flex;align-items:center;flex-shrink:0;transition:all .15s}
+.cat-del-btn:hover{border-color:#f44336;color:#f44336}
+
+/* 明細テーブル */
+.detail-table{width:100%;border-collapse:collapse;font-size:12px}
+.detail-table th{background:#ddeaf7;color:#5c7a9e;font-weight:600;padding:6px 6px;text-align:center;border-bottom:1px solid #c5d9f0;white-space:nowrap}
+.detail-table td{padding:3px 4px;border-bottom:1px solid #eef4fb}
+.detail-table td input{border:1px solid #b8d0ea;border-radius:5px;padding:5px 7px;font-size:12px;background:#f5f9ff;color:#1a1a1a;width:100%;transition:border-color .15s,background .15s}
+.detail-table td input:hover{border-color:#7bafd4;background:#fff}
+.detail-table td input:focus{outline:none;border-color:#1976d2;background:#fff}
+.detail-table td input::placeholder{color:#b0c8e0}
+.detail-table td.r input{text-align:right}
+.detail-table td.amount-cell{text-align:right;padding-right:8px;font-size:12px;color:#1565c0;font-weight:500}
+.detail-table td.amount-cell.zero{color:#c0d4e8}
+.detail-table tfoot td{padding:6px 8px;font-size:12px;font-weight:600}
+.subtotal-row td{background:#eef4fb}
+.cat-label-tr td{padding:5px 10px;font-size:11px;font-weight:700;color:#1976d2;background:#e8f2fb;letter-spacing:.04em}
+.add-row-btn{width:100%;padding:7px;font-size:12px;color:#7bafd4;background:none;border:none;border-top:1px solid #ddeaf7;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:4px;transition:all .15s}
+.add-row-btn:hover{background:#eef4fb;color:#1976d2}
+
+/* 品名サジェスト */
+.hinmei-wrap{position:relative}
+.hinmei-dropdown{position:absolute;top:calc(100% + 2px);left:0;min-width:280px;background:#fff;border:1px solid #b8d0ea;border-radius:8px;z-index:400;overflow:hidden;box-shadow:0 4px 16px rgba(25,118,210,.12);display:none}
+.hinmei-dropdown.open{display:block}
+.hd-item{padding:7px 12px;font-size:12px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #eef4fb;gap:8px}
+.hd-item:last-child{border-bottom:none}
+.hd-item:hover,.hd-item.active{background:#ddeaf7}
+.hd-name{font-weight:500;color:#1a1a1a;flex:1}
+.hd-meta{font-size:11px;color:#7bafd4}
+.hd-price{font-size:12px;font-weight:500;color:#1565c0;white-space:nowrap}
+.hd-new{color:#888;font-style:italic}
+.hd-new:hover{background:#e8f5e9}
+.highlight{background:#fff3cd;border-radius:2px;padding:0 1px}
+
+/* カテゴリ追加・合計 */
+.add-cat-btn{width:100%;padding:10px;font-size:13px;border:1px dashed #7bafd4;border-radius:8px;background:none;color:#7bafd4;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:all .15s;margin-bottom:4px}
+.add-cat-btn:hover{border-color:#1976d2;color:#1976d2;background:#eef4fb}
+
+.total-section{background:#fff;border:1px solid #c5d9f0;border-radius:10px;padding:16px 20px;margin-bottom:16px}
+.total-inner{display:flex;flex-direction:column;gap:8px}
+.total-line{display:flex;justify-content:space-between;align-items:center;font-size:13px}
+.total-line .lbl{color:#5c7a9e}
+.total-line.grand{font-size:19px;font-weight:700;border-top:2px solid #ddeaf7;padding-top:12px;margin-top:2px;color:#1565c0}
+.total-line.grand .lbl{color:#1565c0}
+
+/* ボタン */
+.btn{padding:8px 16px;font-size:13px;border:1px solid rgba(255,255,255,.3);border-radius:7px;cursor:pointer;background:rgba(255,255,255,.15);color:#fff;display:inline-flex;align-items:center;gap:6px;transition:all .15s;white-space:nowrap}
+.btn:hover{background:rgba(255,255,255,.25)}
+.btn-primary{background:#fff;color:#1565c0;border-color:#fff;font-weight:600}
+.btn-primary:hover{background:#e3f2fd;color:#0d47a1}
+.btn-success{background:#2e7d32;color:#fff;border-color:#2e7d32}
+.btn-success:hover{background:#1b5e20}
+.btn-sm{padding:5px 10px;font-size:12px}
+
+/* 履歴モーダル */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:500;display:none;align-items:center;justify-content:center}
+.modal-overlay.open{display:flex}
+.modal{background:#fff;border-radius:12px;width:min(700px,95vw);max-height:80vh;display:flex;flex-direction:column;overflow:hidden}
+.modal-header{padding:16px 20px;background:#1565c0;color:#fff;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;border-radius:12px 12px 0 0}
+.modal-title{font-size:15px;font-weight:600;color:#fff}
+.modal-close{background:none;border:none;font-size:20px;cursor:pointer;color:rgba(255,255,255,.7);line-height:1}
+.modal-close:hover{color:#fff}
+.modal-body{padding:16px 20px;overflow-y:auto;flex:1}
+.hist-filter{display:flex;gap:8px;margin-bottom:12px}
+.hist-search{flex:1;padding:7px 10px;font-size:13px;border:1px solid #b8d0ea;border-radius:6px;background:#f5f9ff}
+.hist-table{width:100%;border-collapse:collapse;font-size:13px}
+.hist-table th{background:#ddeaf7;color:#5c7a9e;font-weight:600;padding:7px 10px;text-align:left;border-bottom:1px solid #c5d9f0;white-space:nowrap}
+.hist-table td{padding:9px 10px;border-bottom:1px solid #eef4fb;vertical-align:middle}
+.hist-table tr:hover td{background:#f0f7ff}
+.hist-name{font-weight:600;font-size:13px}
+.hist-client{font-size:11px;color:#7bafd4;margin-top:1px}
+.hist-amount{text-align:right;font-weight:600;color:#1565c0}
+.hist-date{font-size:11px;color:#aaa;white-space:nowrap}
+.s-badge{font-size:11px;padding:2px 7px;border-radius:4px;white-space:nowrap}
+.s-draft{background:#fff8e1;color:#f57f17}
+.s-saved{background:#e8f5e9;color:#2e7d32}
+.s-exported{background:#e3f2fd;color:#1565c0}
+.row-btns{display:flex;gap:4px}
+.row-btn{font-size:11px;padding:3px 8px;border:1px solid #b8d0ea;border-radius:5px;background:none;cursor:pointer;color:#5c7a9e;white-space:nowrap}
+.row-btn:hover{background:#eef4fb}
+.row-btn.load{color:#1976d2;border-color:#90caf9}
+.row-btn.load:hover{background:#ddeaf7}
+.row-btn.del{color:#f44336;border-color:#ffcdd2}
+.row-btn.del:hover{background:#ffebee}
+.empty-msg{text-align:center;color:#aaa;padding:40px 0;font-size:13px}
+
+/* 部材マスターモーダル */
+.master-form-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1.2fr;gap:8px;margin-bottom:10px}
+.master-form-grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.master-table{width:100%;border-collapse:collapse;font-size:12px;margin-top:12px}
+.master-table th{background:#ddeaf7;color:#5c7a9e;font-weight:600;padding:6px 10px;text-align:left;border-bottom:1px solid #c5d9f0}
+.master-table td{padding:7px 10px;border-bottom:1px solid #eef4fb;font-size:12px}
+.master-table tr:hover td{background:#f0f7ff}
+
+/* トースト */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:#1565c0;color:#fff;padding:10px 20px;border-radius:8px;font-size:13px;opacity:0;transition:all .3s;z-index:600;pointer-events:none;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* 部材登録ミニポップアップ */
+.reg-popup-overlay{position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:700;display:none;align-items:center;justify-content:center}
+.reg-popup-overlay.open{display:flex}
+.reg-popup{background:#fff;border-radius:12px;width:min(420px,92vw);padding:20px;box-shadow:0 8px 32px rgba(0,0,0,.15)}
+.reg-popup-title{font-size:14px;font-weight:600;margin-bottom:4px}
+.reg-popup-sub{font-size:12px;color:#888;margin-bottom:14px}
+.reg-popup-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.reg-popup-grid .full{grid-column:1/-1}
+.reg-popup-btns{display:flex;gap:8px;justify-content:flex-end}
+</style>
+</head>
+<body>
+
+<!-- ログイン画面 -->
+<div id="login-screen" style="position:fixed;inset:0;background:#eef4fb;z-index:1000;display:flex;align-items:center;justify-content:center">
+  <div style="background:#fff;border-radius:16px;padding:40px 36px;width:min(380px,92vw);border:1px solid #c5d9f0;box-shadow:0 4px 24px rgba(21,101,192,.1)">
+    <div style="text-align:center;margin-bottom:28px">
+      <div style="font-size:22px;font-weight:700;color:#1565c0;margin-bottom:6px">見積書作成</div>
+      <div style="font-size:13px;color:#5c7a9e">堺総合サービス　株式会社</div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div>
+        <label style="font-size:11px;color:#5c7a9e;font-weight:500;display:block;margin-bottom:4px">メールアドレス</label>
+        <input id="login-email" type="email" placeholder="example@sakaiss.com"
+          style="width:100%;padding:9px 12px;font-size:13px;border:1px solid #b8d0ea;border-radius:8px;background:#f5f9ff;color:#1a1a1a;outline:none">
+      </div>
+      <div>
+        <label style="font-size:11px;color:#5c7a9e;font-weight:500;display:block;margin-bottom:4px">パスワード</label>
+        <input id="login-password" type="password" placeholder="パスワード"
+          style="width:100%;padding:9px 12px;font-size:13px;border:1px solid #b8d0ea;border-radius:8px;background:#f5f9ff;color:#1a1a1a;outline:none"
+          onkeydown="if(event.key==='Enter')doLogin()">
+      </div>
+      <div id="login-error" style="font-size:12px;color:#c62828;min-height:16px;text-align:center"></div>
+      <button onclick="doLogin()"
+        style="width:100%;padding:11px;font-size:14px;font-weight:600;background:#1565c0;color:#fff;border:none;border-radius:8px;cursor:pointer;margin-top:4px">
+        ログイン
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Firebase SDK -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getFirestore, doc, setDoc, getDoc, collection, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBPDEKdcdgEABFV0uptwzHl2oVrra29WI0",
+  authDomain: "mitumorisakusei-25a16.firebaseapp.com",
+  projectId: "mitumorisakusei-25a16",
+  storageBucket: "mitumorisakusei-25a16.firebasestorage.app",
+  messagingSenderId: "678494898242",
+  appId: "1:678494898242:web:eb868bbe6a66b6fd52c5db"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+// グローバルに公開
+window.fbAuth = auth;
+window.fbDb = db;
+window.fbSignIn = signInWithEmailAndPassword;
+window.fbSignOut = signOut;
+window.fbOnAuthStateChanged = onAuthStateChanged;
+window.fbDoc = doc;
+window.fbSetDoc = setDoc;
+window.fbGetDoc = getDoc;
+window.fbCollection = collection;
+window.fbGetDocs = getDocs;
+window.fbDeleteDoc = deleteDoc;
+</script>
+
+<div class="app-header">
+  <div class="app-header-left">
+    <span class="app-title">見積書作成</span>
+    <span class="estimate-no" id="estimate-no-display">見積番号：自動採番</span>
+  </div>
+  <div class="app-header-right">
+    <button class="btn" onclick="openBackupModal()">💾 バックアップ</button>
+    <button class="btn" onclick="openPreview()">👁 プレビュー</button>
+    <button class="btn" onclick="openHistModal()">📋 履歴</button>
+    <button class="btn" onclick="openMasterModal()">📦 部材マスター</button>
+    <button class="btn" onclick="saveEstimate()">💾 保存</button>
+    <button class="btn btn-primary" onclick="exportExcel()">⬇ Excel出力</button>
+    <span id="login-user" style="font-size:12px;color:rgba(255,255,255,.7);margin-left:4px"></span>
+    <button class="btn" onclick="doLogout()" style="font-size:12px;padding:5px 10px">ログアウト</button>
+  </div>
+</div>
+
+<div class="main">
+  <!-- 表紙情報 -->
+  <div class="section">
+    <div class="section-title">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      表紙情報
+    </div>
+    <div class="form-grid" style="margin-bottom:12px">
+      <div class="form-group">
+        <label class="form-label">宛先会社名</label>
+        <input class="form-input" id="f-client" type="text" placeholder="株式会社 〇〇">
+      </div>
+      <div class="form-group">
+        <label class="form-label">工事名（件名）</label>
+        <input class="form-input" id="f-title" type="text" placeholder="〇〇工事">
+      </div>
+    </div>
+    <div class="form-group" style="margin-bottom:12px">
+      <label class="form-label">工期</label>
+      <div class="koki-row">
+        <input class="form-input" id="f-koki-from" type="date">
+        <span class="koki-sep">〜</span>
+        <input class="form-input" id="f-koki-to" type="date">
+        <span class="koki-sep" style="font-size:11px;color:#bbb">（予定）</span>
+      </div>
+    </div>
+    <div class="form-grid" style="margin-bottom:12px">
+      <div class="form-group">
+        <label class="form-label">工事場所</label>
+        <input class="form-input" id="f-place" type="text" placeholder="大阪府堺市〇〇">
+      </div>
+      <div class="form-group">
+        <label class="form-label">支払条件 <span class="default-tag">デフォルト</span></label>
+        <input class="form-input" id="f-payment" type="text" value="金融機関の口座振込">
+      </div>
+    </div>
+    <div class="form-grid" style="margin-bottom:12px">
+      <div class="form-group">
+        <label class="form-label">見積有効期限 <span class="default-tag">デフォルト</span></label>
+        <input class="form-input" id="f-expiry" type="text" value="発行日より30日間">
+      </div>
+      <div class="form-group">
+        <label class="form-label">備考</label>
+        <input class="form-input" id="f-note" type="text" placeholder="任意">
+      </div>
+    </div>
+    <hr class="divider">
+    <div class="tax-row">
+      <label>消費税</label>
+      <select id="tax-rate" onchange="updateTotal()">
+        <option value="0">なし（税抜のみ）</option>
+        <option value="10" selected>10%</option>
+        <option value="8">8%（軽減税率）</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- 明細 -->
+  <div class="section">
+    <div class="section-title">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+      明細
+    </div>
+    <div id="cat-container"></div>
+    <button class="add-cat-btn" onclick="addCategory()">＋ カテゴリを追加</button>
+  </div>
+
+  <!-- 合計 -->
+  <div class="total-section">
+    <div class="total-inner">
+      <div class="total-line"><span class="lbl">小計合計（税抜）</span><span id="subtotal-disp">¥0</span></div>
+      <div class="total-line" id="tax-line"><span class="lbl" id="tax-label-disp">消費税（10%）</span><span id="tax-disp">¥0</span></div>
+      <div class="total-line grand"><span class="lbl">合計金額</span><span id="grand-disp">¥0</span></div>
+    </div>
+  </div>
+
+  <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:4px">
+    <button class="btn" style="background:#fff;color:#1565c0;border:1px solid #90caf9" onclick="openPreview()">👁 プレビュー</button>
+    <button class="btn" style="background:#fff;color:#555;border:1px solid #c5d9f0" onclick="clearForm()">🗑 クリア</button>
+    <button class="btn" style="background:#fff;color:#1565c0;border:1px solid #90caf9" onclick="saveEstimate()">💾 保存</button>
+    <button class="btn btn-primary" style="background:#1565c0;color:#fff;border-color:#1565c0" onclick="exportExcel()">⬇ Excel出力</button>
+  </div>
+</div>
+
+<!-- 履歴モーダル -->
+<div class="modal-overlay" id="hist-modal" onclick="e=>e.target===this&&closeHistModal()">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <span class="modal-title">📋 見積履歴</span>
+      <button class="modal-close" onclick="closeHistModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="hist-filter">
+        <input class="hist-search" type="text" placeholder="工事名・宛先で検索..." oninput="renderHistList(this.value)">
+      </div>
+      <div id="hist-list"></div>
+    </div>
+  </div>
+</div>
+
+<!-- プレビューモーダル -->
+<div class="modal-overlay" id="preview-modal" onclick="if(event.target===this)closePreview()" style="align-items:flex-start;padding:20px 0;overflow-y:auto">
+  <div style="background:#e8e8e8;width:min(780px,96vw);border-radius:12px;overflow:hidden;margin:auto" onclick="event.stopPropagation()">
+    <div class="modal-header" style="border-radius:0">
+      <span class="modal-title">👁 プレビュー</span>
+      <div style="display:flex;gap:8px;align-items:center">
+        <span style="font-size:12px;color:rgba(255,255,255,.7)">印刷・出力前の確認用</span>
+        <button class="modal-close" onclick="closePreview()">×</button>
+      </div>
+    </div>
+    <div style="padding:16px;display:flex;flex-direction:column;gap:12px" id="preview-content"></div>
+  </div>
+</div>
+
+<!-- JSON出力モーダル -->
+<div class="modal-overlay" id="json-modal" onclick="if(event.target===this)closeJsonModal()">
+  <div class="modal" onclick="event.stopPropagation()" style="width:min(560px,95vw)">
+    <div class="modal-header">
+      <span class="modal-title">⬇ Excel出力用データ</span>
+      <button class="modal-close" onclick="closeJsonModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <div style="font-size:13px;color:#5c7a9e;margin-bottom:12px;line-height:1.7">
+        ① 下の「コピー」ボタンを押す<br>
+        ② <strong>見積書見本.xlsm</strong> を開く<br>
+        ③ 「貼り付けて出力」ボタンを押す → 完成！
+      </div>
+      <textarea id="json-textarea" readonly
+        style="width:100%;height:200px;font-size:11px;font-family:monospace;
+               border:1px solid #b8d0ea;border-radius:6px;padding:8px;
+               background:#f5f9ff;color:#333;resize:none;line-height:1.5"></textarea>
+      <div style="display:flex;gap:8px;margin-top:12px;justify-content:flex-end">
+        <button class="btn" style="background:#2e7d32;color:#fff;border-color:#2e7d32;font-size:14px;padding:10px 24px"
+          onclick="copyJson()">📋 コピー</button>
+        <button class="btn" style="background:#fff;color:#555;border:1px solid #c5d9f0"
+          onclick="closeJsonModal()">閉じる</button>
+      </div>
+      <div id="copy-ok" style="text-align:center;color:#2e7d32;font-size:13px;margin-top:8px;display:none">
+        ✅ コピーしました！見積書見本.xlsmを開いて「貼り付けて出力」を押してください。
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 部材マスターモーダル -->
+<div class="modal-overlay" id="master-modal" onclick="e=>e.target===this&&closeMasterModal()">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <span class="modal-title">📦 部材マスター</span>
+      <button class="modal-close" onclick="closeMasterModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+        <div style="font-size:13px;font-weight:600">新規登録</div>
+        <div style="display:flex;gap:8px">
+          <label style="cursor:pointer">
+            <input type="file" id="csv-import-file" accept=".csv" style="display:none" onchange="importCSV(this)">
+            <span class="btn btn-sm" style="background:#e8f5e9;color:#2e7d32;border-color:#a5d6a7;font-size:12px;cursor:pointer">📥 CSVで一括取込</span>
+          </label>
+          <button class="btn btn-sm" style="font-size:12px;color:#1565c0;border-color:#90caf9" onclick="downloadMasterCSV()">📤 CSVエクスポート</button>
+        </div>
+      </div>
+      <div id="csv-msg" style="font-size:12px;margin-bottom:8px;min-height:16px"></div>
+      <div class="master-form-grid">
+        <div class="form-group"><label class="form-label">品名</label><input class="form-input" id="m-hinmei" type="text" placeholder="ケーブル CV5.5×3C"></div>
+        <div class="form-group"><label class="form-label">型番</label><input class="form-input" id="m-model" type="text" placeholder="CV5.5-3C"></div>
+        <div class="form-group"><label class="form-label">単位</label><input class="form-input" id="m-unit" type="text" placeholder="m"></div>
+        <div class="form-group"><label class="form-label">標準単価</label><input class="form-input" id="m-price" type="number" placeholder="1200"></div>
+        <div class="form-group"><label class="form-label">カテゴリ</label><input class="form-input" id="m-cat" type="text" placeholder="材料費"></div>
+      </div>
+      <button class="btn btn-success btn-sm" onclick="addMasterItem()">＋ 登録</button>
+      <table class="master-table" id="master-table">
+        <thead><tr><th>品名</th><th>型番</th><th>単位</th><th>標準単価</th><th>カテゴリ</th><th></th></tr></thead>
+        <tbody id="master-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- バックアップ・復元モーダル -->
+<div class="modal-overlay" id="backup-modal" onclick="if(event.target===this)closeBackupModal()">
+  <div class="modal" onclick="event.stopPropagation()" style="width:min(480px,95vw)">
+    <div class="modal-header">
+      <span class="modal-title">💾 バックアップ・復元</span>
+      <button class="modal-close" onclick="closeBackupModal()">×</button>
+    </div>
+    <div class="modal-body">
+
+      <div style="background:#e8f5e9;border-radius:8px;padding:14px 16px;margin-bottom:16px;font-size:13px;color:#2e7d32;line-height:1.7">
+        <strong>💡 推奨：</strong>定期的にバックアップを保存して、共有フォルダや外付けドライブに置いておくと安全です。
+      </div>
+
+      <div style="margin-bottom:20px">
+        <div style="font-size:14px;font-weight:600;margin-bottom:8px;color:#1565c0">📤 バックアップを保存</div>
+        <div style="font-size:12px;color:#5c7a9e;margin-bottom:10px">部材マスター・見積履歴を1つのJSONファイルに書き出します。</div>
+        <div style="display:flex;gap:8px">
+          <button class="btn" style="background:#1565c0;color:#fff;border-color:#1565c0" onclick="downloadBackup()">
+            ⬇ バックアップファイルを保存
+          </button>
+        </div>
+        <div style="font-size:11px;color:#aaa;margin-top:6px" id="backup-last-saved"></div>
+      </div>
+
+      <hr style="border:none;border-top:1px solid #ddeaf7;margin-bottom:20px">
+
+      <div>
+        <div style="font-size:14px;font-weight:600;margin-bottom:8px;color:#1565c0">📥 バックアップから復元</div>
+        <div style="font-size:12px;color:#5c7a9e;margin-bottom:10px">保存したJSONファイルを読み込んでデータを復元します。<br>
+        <span style="color:#e65100">⚠ 現在のデータは上書きされます。</span></div>
+        <label style="display:inline-block;cursor:pointer">
+          <input type="file" id="restore-file" accept=".json" style="display:none" onchange="restoreBackup(this)">
+          <span class="btn" style="background:#fff;color:#1565c0;border:1px solid #90caf9;cursor:pointer">
+            📂 ファイルを選んで復元
+          </span>
+        </label>
+        <div id="restore-msg" style="font-size:12px;margin-top:8px"></div>
+      </div>
+
+      <hr style="border:none;border-top:1px solid #ddeaf7;margin:20px 0 16px">
+
+      <div>
+        <div style="font-size:14px;font-weight:600;margin-bottom:8px;color:#1565c0">📊 現在のデータ件数</div>
+        <div id="backup-stats" style="font-size:13px;color:#333;line-height:2"></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ========== データ ==========
+let masterItems = [];
+let estimates = [];
+let categories = [];
+let catIdSeq = 0;
+let currentEstimateId = null;
+let currentUser = null;
+
+const DEFAULT_MASTER = [
+  {hinmei:'工具損料',unit:'式',price:70000,cat:'電気工事'},
+  {hinmei:'ケーブル CV5.5×3C',unit:'m',price:1200,cat:'材料費'},
+  {hinmei:'ケーブル CV8×3C',unit:'m',price:1850,cat:'材料費'},
+  {hinmei:'端子台 TB-2015',unit:'個',price:350,cat:'材料費'},
+  {hinmei:'仮設足場',unit:'式',price:120000,cat:'仮設工事'},
+  {hinmei:'諸経費',unit:'式',price:50000,cat:'諸経費'},
+];
+
+// ========== Firebase認証 ==========
+function doLogin(){
+  const email = document.getElementById('login-email').value.trim();
+  const pass  = document.getElementById('login-password').value;
+  const err   = document.getElementById('login-error');
+  err.textContent = 'ログイン中...';
+  window.fbSignIn(window.fbAuth, email, pass)
+    .then(() => { err.textContent = ''; })
+    .catch(e => {
+      err.textContent = 'メールアドレスまたはパスワードが違います';
+    });
+}
+
+function doLogout(){
+  if(!confirm('ログアウトしますか？')) return;
+  window.fbSignOut(window.fbAuth);
+}
+
+// 認証状態の監視（Firebase SDKロード後に実行）
+function initAuthListener(){
+  window.fbOnAuthStateChanged(window.fbAuth, async user => {
+    if(user){
+      currentUser = user;
+      document.getElementById('login-screen').style.display = 'none';
+      document.getElementById('login-user').textContent = user.email;
+      await loadFromFirebase();
+      addCategory('電気工事');
+      updateTotal();
+    } else {
+      currentUser = null;
+      document.getElementById('login-screen').style.display = 'flex';
+      document.getElementById('login-user').textContent = '';
+    }
+  });
+}
+
+// ========== Firebase データ操作 ==========
+async function loadFromFirebase(){
+  try {
+    // 部材マスター読み込み
+    const masterDoc = await window.fbGetDoc(window.fbDoc(window.fbDb, 'appdata', 'master'));
+    if(masterDoc.exists()){
+      masterItems = masterDoc.data().items || [];
+    } else {
+      masterItems = [...DEFAULT_MASTER];
+      await saveMaster();
+    }
+
+    // 見積履歴読み込み
+    const histDoc = await window.fbGetDoc(window.fbDoc(window.fbDb, 'appdata', 'estimates'));
+    if(histDoc.exists()){
+      estimates = histDoc.data().list || [];
+    } else {
+      estimates = [];
+    }
+    showToast('データを読み込みました');
+  } catch(e) {
+    console.error('Firebase読み込みエラー:', e);
+    // フォールバック：localStorageから読み込み
+    masterItems = JSON.parse(localStorage.getItem('mitumori_master') || '[]');
+    estimates   = JSON.parse(localStorage.getItem('mitumori_estimates') || '[]');
+    if(masterItems.length === 0) masterItems = [...DEFAULT_MASTER];
+    showToast('オフラインモードで動作中');
+  }
+}
+
+// ========== カテゴリ操作 ==========
+function getCatNames(){
+  // マスターに登録済みのカテゴリ名一覧（重複なし）
+  const fromMaster = [...new Set(masterItems.map(m=>m.cat).filter(Boolean))];
+  const fromCurrent = categories.map(c=>c.name).filter(Boolean);
+  return [...new Set([...fromCurrent, ...fromMaster])];
+}
+
+function addCategory(name=''){
+  const id = ++catIdSeq;
+  categories.push({id, name, rows:[{hinmei:'',qty:'',unit:'',tanka:'',biko:''}]});
+  renderCategories();
+  updateTotal();
+}
+
+function removeCat(id){
+  categories = categories.filter(c=>c.id!==id);
+  renderCategories();
+  updateTotal();
+}
+
+function addRow(catId){
+  const cat = categories.find(c=>c.id===catId);
+  if(cat) cat.rows.push({hinmei:'',qty:'',unit:'',tanka:'',biko:''});
+  renderCategories();
+  updateTotal();
+}
+
+function removeRow(catId, rowIdx){
+  const cat = categories.find(c=>c.id===catId);
+  if(cat && cat.rows.length > 1) cat.rows.splice(rowIdx,1);
+  else if(cat) cat.rows[rowIdx]={hinmei:'',qty:'',unit:'',tanka:'',biko:''};
+  renderCategories();
+  updateTotal();
+}
+
+function updateCatField(id, field, val){
+  const cat = categories.find(c=>c.id===id);
+  if(cat) cat[field]=val;
+  updateTotal();
+}
+
+function updateRowField(catId, rowIdx, field, val){
+  const cat = categories.find(c=>c.id===catId);
+  if(cat && cat.rows[rowIdx]) cat.rows[rowIdx][field]=val;
+  if(field==='qty'||field==='tanka') refreshAmountCell(catId, rowIdx);
+  updateTotal();
+}
+
+// ========== 描画 ==========
+function renderCategories(){
+  const container = document.getElementById('cat-container');
+  const catNo = (i) => `No.${i+2}`;
+  container.innerHTML = categories.map((cat,ci)=>`
+    <div class="cat-block" id="catblock-${cat.id}">
+      <div class="cat-header">
+        <span class="cat-no">${catNo(ci)}</span>
+        <div class="cat-input-wrap">
+          <input class="cat-input" id="catinput-${cat.id}" type="text" value="${esc(cat.name)}"
+            placeholder="カテゴリ名"
+            onfocus="openCatDD(${cat.id})"
+            oninput="onCatInput(${cat.id},this.value)"
+            onblur="closeCatDD(${cat.id})"
+          >
+          <span class="cat-chevron">▾</span>
+          <div class="cat-dropdown" id="catdd-${cat.id}"></div>
+        </div>
+        <button class="cat-del-btn" onclick="removeCat(${cat.id})">✕</button>
+      </div>
+      <table class="detail-table">
+        <thead><tr>
+          <th style="width:34%">品名</th>
+          <th style="width:9%">数量</th>
+          <th style="width:8%">単位</th>
+          <th style="width:12%">単価</th>
+          <th style="width:12%">金額</th>
+          <th style="width:21%">備考</th>
+          <th style="width:4%"></th>
+        </tr></thead>
+        <tbody>
+          <tr class="cat-label-tr"><td colspan="7">▶ ${esc(cat.name||'（未設定）')}</td></tr>
+          ${cat.rows.map((row,ri)=>renderRow(cat.id, ri, row)).join('')}
+        </tbody>
+        <tfoot>
+          <tr class="subtotal-row">
+            <td colspan="4" style="text-align:right;color:#aaa;padding-right:8px;font-size:11px">小計</td>
+            <td style="text-align:right;padding-right:8px;font-size:12px;font-weight:600" id="subtotal-${cat.id}">${fmtNum(calcSubtotal(cat))}</td>
+            <td colspan="2"></td>
+          </tr>
+        </tfoot>
+      </table>
+      <button class="add-row-btn" onclick="addRow(${cat.id})">＋ 行を追加</button>
+    </div>
+  `).join('');
+}
+
+function renderRow(catId, ri, row){
+  const amt = calcRowAmount(row);
+  const amtCls = amt===0 ? 'amount-cell zero' : 'amount-cell';
+  return `<tr id="row-${catId}-${ri}">
+    <td><div class="hinmei-wrap">
+      <input type="text" value="${esc(row.hinmei)}" placeholder="品名を入力または検索..."
+        onfocus="openHinmeiDD(${catId},${ri})"
+        oninput="onHinmeiInput(${catId},${ri},this.value)"
+        onblur="closeHinmeiDD(${catId},${ri})"
+        onchange="commitHinmei(${catId},${ri},this.value)"
+      >
+      <div class="hinmei-dropdown" id="hdd-${catId}-${ri}"></div>
+    </div></td>
+    <td class="r"><input type="text" value="${esc(row.qty)}" style="text-align:right"
+      onchange="updateRowField(${catId},${ri},'qty',this.value)"
+      oninput="updateRowField(${catId},${ri},'qty',this.value)"></td>
+    <td><input type="text" value="${esc(row.unit)}"
+      onchange="updateRowField(${catId},${ri},'unit',this.value);syncMasterRow(${catId},${ri})"></td>
+    <td class="r"><input type="text" value="${esc(row.tanka)}" style="text-align:right"
+      onchange="updateRowField(${catId},${ri},'tanka',this.value);syncMasterRow(${catId},${ri})"
+      oninput="updateRowField(${catId},${ri},'tanka',this.value)"></td>
+    <td class="${amtCls}" id="amt-${catId}-${ri}">${amt===0?'—':fmtNum(amt)}</td>
+    <td><input type="text" value="${esc(row.biko)}"
+      onchange="updateRowField(${catId},${ri},'biko',this.value)"></td>
+    <td style="text-align:center">
+      <button style="background:none;border:none;cursor:pointer;color:#ccc;font-size:13px;padding:3px" onclick="removeRow(${catId},${ri})">✕</button>
+    </td>
+  </tr>`;
+}
+
+function refreshAmountCell(catId, rowIdx){
+  const cat = categories.find(c=>c.id===catId);
+  if(!cat) return;
+  const row = cat.rows[rowIdx];
+  const amt = calcRowAmount(row);
+  const el = document.getElementById(`amt-${catId}-${rowIdx}`);
+  if(el){
+    el.textContent = amt===0?'—':fmtNum(amt);
+    el.className = amt===0?'amount-cell zero':'amount-cell';
+  }
+  const sub = document.getElementById(`subtotal-${catId}`);
+  if(sub) sub.textContent = fmtNum(calcSubtotal(cat));
+}
+
+// ========== カテゴリドロップダウン ==========
+function openCatDD(id){
+  const val = document.getElementById(`catinput-${id}`).value;
+  renderCatDD(id, val);
+  document.getElementById(`catdd-${id}`).classList.add('open');
+}
+function closeCatDD(id){
+  setTimeout(()=>{
+    const dd = document.getElementById(`catdd-${id}`);
+    if(dd) dd.classList.remove('open');
+    // カテゴリ名ラベル更新
+    const inp = document.getElementById(`catinput-${id}`);
+    if(inp){
+      updateCatField(id,'name',inp.value);
+      // ラベル行更新
+      const cat = categories.find(c=>c.id===id);
+      const labelTd = document.querySelector(`#catblock-${id} .cat-label-tr td`);
+      if(labelTd && cat) labelTd.textContent = '▶ '+(cat.name||'（未設定）');
+    }
+  }, 200);
+}
+function onCatInput(id, val){
+  updateCatField(id,'name',val);
+  renderCatDD(id, val);
+  // ラベル行リアルタイム更新
+  const labelTd = document.querySelector(`#catblock-${id} .cat-label-tr td`);
+  if(labelTd) labelTd.textContent = '▶ '+(val||'（未設定）');
+}
+function renderCatDD(id, query){
+  const dd = document.getElementById(`catdd-${id}`);
+  if(!dd) return;
+  const cats = getCatNames();
+  const q = query.trim().toLowerCase();
+  const filtered = q ? cats.filter(c=>c.toLowerCase().includes(q)) : cats;
+  const exactMatch = cats.some(c=>c===query.trim());
+  let html = filtered.map(c=>`
+    <div class="dd-item ${c===query?'active':''}" onmousedown="pickCat(${id},'${esc(c)}')">${esc(c)}</div>
+  `).join('');
+  if(query.trim() && !exactMatch){
+    html += `<div class="dd-item new-item" onmousedown="pickCat(${id},'${esc(query.trim())}')">＋「${esc(query.trim())}」を新規追加</div>`;
+  }
+  if(!html) html = `<div class="dd-item" style="color:#aaa;cursor:default">候補なし</div>`;
+  dd.innerHTML = html;
+}
+function pickCat(id, name){
+  const inp = document.getElementById(`catinput-${id}`);
+  if(inp) inp.value = name;
+  updateCatField(id,'name',name);
+  const labelTd = document.querySelector(`#catblock-${id} .cat-label-tr td`);
+  if(labelTd) labelTd.textContent = '▶ '+name;
+  setTimeout(()=>document.getElementById(`catdd-${id}`)?.classList.remove('open'),50);
+  updateTotal();
+}
+
+// ========== 品名ドロップダウン ==========
+function openHinmeiDD(catId, ri){
+  const inp = document.querySelector(`#row-${catId}-${ri} input`);
+  const val = inp ? inp.value : '';
+  renderHinmeiDD(catId, ri, val);
+  document.getElementById(`hdd-${catId}-${ri}`)?.classList.add('open');
+}
+function closeHinmeiDD(catId, ri){
+  setTimeout(()=>document.getElementById(`hdd-${catId}-${ri}`)?.classList.remove('open'), 200);
+}
+function onHinmeiInput(catId, ri, val){
+  updateRowField(catId, ri, 'hinmei', val);
+  renderHinmeiDD(catId, ri, val);
+}
+function renderHinmeiDD(catId, ri, query){
+  const dd = document.getElementById(`hdd-${catId}-${ri}`);
+  if(!dd) return;
+  const q = query.trim().toLowerCase();
+  const filtered = q
+    ? masterItems.filter(m=>m.hinmei.toLowerCase().includes(q)||(m.model||'').toLowerCase().includes(q))
+    : masterItems.slice(0,8);
+  const exactMatch = masterItems.some(m=>m.hinmei===query.trim());
+  const hilite = (str)=>{
+    if(!q) return esc(str);
+    return esc(str).replace(new RegExp(q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),'gi'),m=>`<span class="highlight">${m}</span>`);
+  };
+  let html = filtered.map(m=>`
+    <div class="hd-item" onmousedown="pickHinmei(${catId},${ri},'${esc(m.hinmei)}','${esc(m.model||'')}','${esc(m.unit)}',${m.price})">
+      <div>
+        <div class="hd-name">${hilite(m.hinmei)}${m.model?` <span style="color:#888;font-size:11px">(${esc(m.model)})</span>`:''}</div>
+        <div class="hd-meta">${esc(m.cat||'')}${m.model?` ・ ${esc(m.model)}`:''}</div>
+      </div>
+      <div class="hd-price">¥${fmtNum(m.price)} / ${esc(m.unit)}</div>
+    </div>
+  `).join('');
+  if(query.trim() && !exactMatch){
+    html += `<div class="hd-item hd-new" onmousedown="pickHinmeiNew(${catId},${ri},'${esc(query.trim())}')">＋「${esc(query.trim())}」を新規登録</div>`;
+  }
+  if(!html) html = `<div class="hd-item" style="color:#aaa;cursor:default">候補なし</div>`;
+  dd.innerHTML = html;
+  dd.classList.add('open');
+}
+function pickHinmei(catId, ri, hinmei, model, unit, price){
+  const cat = categories.find(c=>c.id===catId);
+  if(!cat||!cat.rows[ri]) return;
+  cat.rows[ri].hinmei = model ? hinmei + '（' + model + '）' : hinmei;
+  cat.rows[ri].unit = unit;
+  cat.rows[ri].tanka = price;
+  renderCategories();
+  updateTotal();
+}
+function commitHinmei(catId, ri, val){
+  const cat = categories.find(c=>c.id===catId);
+  if(!cat||!cat.rows[ri]) return;
+  const hinmei = val.trim();
+  cat.rows[ri].hinmei = hinmei;
+  // 品名（型番）形式でも元の品名でマスター検索
+  const baseName = hinmei.replace(/（.*）$/, '').trim();
+  if(baseName && !masterItems.some(m=>m.hinmei===baseName||m.hinmei===hinmei)){
+    masterItems.push({hinmei: baseName, model:'', unit:'', price:0, cat: cat.name||''});
+    saveMaster();
+  }
+  updateTotal();
+}
+// 単位・単価確定時にマスターを更新
+function syncMasterRow(catId, ri){
+  const cat = categories.find(c=>c.id===catId);
+  if(!cat||!cat.rows[ri]) return;
+  const row = cat.rows[ri];
+  const hinmei = (row.hinmei||'').trim();
+  if(!hinmei) return;
+  const unit = (row.unit||'').trim();
+  const price = parseNum(row.tanka);
+  const baseName = hinmei.replace(/（.*）$/, '').trim();
+  const idx = masterItems.findIndex(m=>m.hinmei===baseName||m.hinmei===hinmei);
+  if(idx>=0){
+    let changed = false;
+    if(unit && masterItems[idx].unit !== unit){ masterItems[idx].unit=unit; changed=true; }
+    if(price && masterItems[idx].price !== price){ masterItems[idx].price=price; changed=true; }
+    if(changed){ saveMaster(); showToast(`「${hinmei}」のマスターを更新しました`); }
+  } else {
+    masterItems.push({hinmei, unit, price, cat: cat.name||''});
+    saveMaster();
+    showToast(`「${hinmei}」をマスターに登録しました`);
+  }
+}
+function pickHinmeiNew(catId, ri, hinmei){
+  const cat = categories.find(c=>c.id===catId);
+  if(!cat||!cat.rows[ri]) return;
+  cat.rows[ri].hinmei = hinmei;
+  // マスターに未登録なら自動登録
+  if(!masterItems.some(m=>m.hinmei===hinmei)){
+    masterItems.push({hinmei, unit:'', price:0, cat: cat.name||''});
+    saveMaster();
+    showToast(`「${hinmei}」をマスターに自動登録しました`);
+  }
+  renderCategories();
+  updateTotal();
+}
+
+// ========== 計算 ==========
+function parseNum(v){ return parseFloat(String(v).replace(/,/g,''))||0; }
+function calcRowAmount(row){ return parseNum(row.qty)*parseNum(row.tanka); }
+function calcSubtotal(cat){ return cat.rows.reduce((s,r)=>s+calcRowAmount(r),0); }
+function calcGrandSubtotal(){ return categories.reduce((s,c)=>s+calcSubtotal(c),0); }
+
+function updateTotal(){
+  const sub = calcGrandSubtotal();
+  const rate = parseInt(document.getElementById('tax-rate').value);
+  const tax = Math.round(sub*rate/100);
+  const grand = sub+tax;
+  document.getElementById('subtotal-disp').textContent = '¥'+fmtNum(sub);
+  const taxLine = document.getElementById('tax-line');
+  if(rate===0){
+    taxLine.style.display='none';
+  } else {
+    taxLine.style.display='flex';
+    document.getElementById('tax-label-disp').textContent=`消費税（${rate}%）`;
+    document.getElementById('tax-disp').textContent='¥'+fmtNum(tax);
+  }
+  document.getElementById('grand-disp').textContent='¥'+fmtNum(grand);
+}
+
+// ========== 履歴 ==========
+function generateEstimateNo(){
+  const d=new Date();
+  const base=`${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}`;
+  const same=estimates.filter(e=>e.no&&e.no.startsWith(base));
+  return base+String(same.length+1).padStart(4,'0');
+}
+
+async function saveEstimate(){
+  const no = currentEstimateId
+    ? estimates.find(e=>e.id===currentEstimateId)?.no
+    : generateEstimateNo();
+  const data = {
+    id: currentEstimateId || Date.now(),
+    no: no || generateEstimateNo(),
+    client: document.getElementById('f-client').value,
+    title: document.getElementById('f-title').value,
+    kokiFrom: document.getElementById('f-koki-from').value,
+    kokiTo: document.getElementById('f-koki-to').value,
+    place: document.getElementById('f-place').value,
+    payment: document.getElementById('f-payment').value,
+    expiry: document.getElementById('f-expiry').value,
+    note: document.getElementById('f-note').value,
+    taxRate: document.getElementById('tax-rate').value,
+    categories: JSON.parse(JSON.stringify(categories)),
+    total: calcGrandSubtotal(),
+    savedAt: new Date().toLocaleDateString('ja-JP'),
+    status: 'saved'
+  };
+  if(currentEstimateId){
+    const idx=estimates.findIndex(e=>e.id===currentEstimateId);
+    if(idx>=0) estimates[idx]=data;
+  } else {
+    estimates.unshift(data);
+    currentEstimateId=data.id;
+  }
+  localStorage.setItem('mitumori_estimates',JSON.stringify(estimates));
+  if(window.fbDb && currentUser){
+    try {
+      await window.fbSetDoc(window.fbDoc(window.fbDb,'appdata','estimates'), {list: estimates});
+    } catch(e){ console.error('履歴保存エラー:', e); }
+  }
+  document.getElementById('estimate-no-display').textContent='見積番号：'+data.no;
+  showToast('保存しました');
+}
+
+function loadEstimate(id){
+  const e=estimates.find(e=>e.id===id);
+  if(!e) return;
+  currentEstimateId=e.id;
+  document.getElementById('f-client').value=e.client||'';
+  document.getElementById('f-title').value=e.title||'';
+  document.getElementById('f-koki-from').value=e.kokiFrom||'';
+  document.getElementById('f-koki-to').value=e.kokiTo||'';
+  document.getElementById('f-place').value=e.place||'';
+  document.getElementById('f-payment').value=e.payment||'金融機関の口座振込';
+  document.getElementById('f-expiry').value=e.expiry||'発行日より30日間';
+  document.getElementById('f-note').value=e.note||'';
+  document.getElementById('tax-rate').value=e.taxRate||'10';
+  categories=JSON.parse(JSON.stringify(e.categories||[]));
+  catIdSeq=categories.reduce((m,c)=>Math.max(m,c.id),0);
+  renderCategories();
+  updateTotal();
+  document.getElementById('estimate-no-display').textContent='見積番号：'+e.no;
+  closeHistModal();
+  showToast('読み込みました：'+e.no);
+}
+
+function duplicateEstimate(id){
+  const e=estimates.find(e=>e.id===id);
+  if(!e) return;
+  const copy=JSON.parse(JSON.stringify(e));
+  copy.id=Date.now();
+  copy.no=generateEstimateNo();
+  copy.savedAt=new Date().toLocaleDateString('ja-JP');
+  copy.status='draft';
+  estimates.unshift(copy);
+  localStorage.setItem('mitumori_estimates',JSON.stringify(estimates));
+  renderHistList();
+  showToast('複製しました：'+copy.no);
+}
+
+async function deleteEstimate(id){
+  if(!confirm('この履歴を削除しますか？')) return;
+  estimates=estimates.filter(e=>e.id!==id);
+  localStorage.setItem('mitumori_estimates',JSON.stringify(estimates));
+  if(window.fbDb && currentUser){
+    try {
+      await window.fbSetDoc(window.fbDoc(window.fbDb,'appdata','estimates'), {list: estimates});
+    } catch(e){ console.error('削除エラー:', e); }
+  }
+  renderHistList();
+  showToast('削除しました');
+}
+
+function openHistModal(){
+  renderHistList();
+  document.getElementById('hist-modal').classList.add('open');
+}
+function closeHistModal(){
+  document.getElementById('hist-modal').classList.remove('open');
+}
+
+function renderHistList(q=''){
+  const list=document.getElementById('hist-list');
+  const filtered=q
+    ? estimates.filter(e=>(e.title||'').includes(q)||(e.client||'').includes(q))
+    : estimates;
+  if(!filtered.length){
+    list.innerHTML=`<div class="empty-msg">履歴がありません</div>`;
+    return;
+  }
+  list.innerHTML=`<table class="hist-table">
+    <thead><tr><th>見積番号</th><th>工事名 / 宛先</th><th style="text-align:right">合計</th><th>保存日</th><th></th></tr></thead>
+    <tbody>${filtered.map(e=>`
+      <tr>
+        <td style="font-size:11px;color:#aaa">${esc(e.no)}</td>
+        <td><div class="hist-name">${esc(e.title||'（無題）')}</div><div class="hist-client">${esc(e.client||'')}</div></td>
+        <td class="hist-amount">¥${fmtNum(e.total||0)}</td>
+        <td class="hist-date">${esc(e.savedAt||'')}</td>
+        <td><div class="row-btns">
+          <button class="row-btn load" onclick="loadEstimate(${e.id})">読込</button>
+          <button class="row-btn" onclick="duplicateEstimate(${e.id})">複製</button>
+          <button class="row-btn del" onclick="deleteEstimate(${e.id})">削除</button>
+        </div></td>
+      </tr>
+    `).join('')}</tbody>
+  </table>`;
+}
+
+// ========== 部材マスター ==========
+async function saveMaster(){
+  localStorage.setItem('mitumori_master', JSON.stringify(masterItems));
+  if(window.fbDb && currentUser){
+    try {
+      await window.fbSetDoc(window.fbDoc(window.fbDb,'appdata','master'), {items: masterItems});
+    } catch(e){ console.error('マスター保存エラー:', e); }
+  }
+}
+function addMasterItem(){
+  const h=document.getElementById('m-hinmei').value.trim();
+  const mo=document.getElementById('m-model').value.trim();
+  const u=document.getElementById('m-unit').value.trim();
+  const p=parseFloat(document.getElementById('m-price').value)||0;
+  const c=document.getElementById('m-cat').value.trim();
+  if(!h){showToast('品名を入力してください');return;}
+  masterItems.push({hinmei:h,model:mo,unit:u,price:p,cat:c});
+  saveMaster();
+  document.getElementById('m-hinmei').value='';
+  document.getElementById('m-model').value='';
+  document.getElementById('m-unit').value='';
+  document.getElementById('m-price').value='';
+  document.getElementById('m-cat').value='';
+  renderMasterTable();
+  showToast('登録しました：'+h);
+}
+function deleteMasterItem(idx){
+  masterItems.splice(idx,1);
+  saveMaster();
+  renderMasterTable();
+}
+function renderMasterTable(){
+  document.getElementById('master-tbody').innerHTML=masterItems.map((m,i)=>`
+    <tr>
+      <td>${esc(m.hinmei)}</td>
+      <td>${esc(m.model||'')}</td>
+      <td>${esc(m.unit)}</td>
+      <td style="text-align:right">¥${fmtNum(m.price)}</td>
+      <td>${esc(m.cat||'')}</td>
+      <td><button class="row-btn del btn-sm" onclick="deleteMasterItem(${i})">削除</button></td>
+    </tr>
+  `).join('');
+}
+
+// ========== 部材マスター CSV取り込み・エクスポート ==========
+function importCSV(input){
+  const file = input.files[0];
+  if(!file) return;
+  const msg = document.getElementById('csv-msg');
+  msg.style.color = '#888';
+  msg.textContent = '読み込み中...';
+
+  const reader = new FileReader();
+  reader.onload = async e => {
+    try {
+      // 文字コード自動判別（BOM確認→UTF-8 BOMあり→UTF-8、それ以外→Shift-JIS試行）
+      const bytes = new Uint8Array(e.target.result);
+      let text;
+      // UTF-8 BOM チェック (EF BB BF)
+      if(bytes[0]===0xEF && bytes[1]===0xBB && bytes[2]===0xBF){
+        text = new TextDecoder('utf-8').decode(bytes);
+      } else {
+        // Shift-JISで試みる
+        try {
+          text = new TextDecoder('shift-jis').decode(bytes);
+        } catch {
+          text = new TextDecoder('utf-8').decode(bytes);
+        }
+      }
+
+      // BOM除去して行分割
+      const cleanText = text.replace(/^\uFEFF/, '').replace(/^\uFFFE/, '');
+      const cleanLines = cleanText.split(/\r?\n/).filter(l => l.trim());
+
+      if(cleanLines.length < 2){
+        msg.style.color = '#c62828';
+        msg.textContent = 'データが空です。';
+        input.value = '';
+        return;
+      }
+
+      // ヘッダー行を確認
+      const header = cleanLines[0].split(',').map(h => h.trim().replace(/^"|"$/g,'').replace(/^\uFEFF/,''));
+      // 必須列インデックスを特定（品名・単位・単価・カテゴリ）
+      const colMap = {
+        hinmei: findCol(header, ['品名','name','hinmei']),
+        model:  findCol(header, ['型番','model','型番・品番']),
+        unit:   findCol(header, ['単位','unit']),
+        price:  findCol(header, ['単価','price','単価（円）']),
+        cat:    findCol(header, ['カテゴリ','category','cat']),
+      };
+
+      if(colMap.hinmei < 0){
+        msg.style.color = '#c62828';
+        msg.textContent = `エラー：「品名」列が見つかりません。\n検出されたヘッダー：${header.join(' / ')}`;
+        input.value = '';
+        return;
+      }
+
+      // データ行を解析
+      const newItems = [];
+      let skipCnt = 0;
+      for(let i = 1; i < cleanLines.length; i++){
+        const cols = parseCSVLine(cleanLines[i]);
+        const hinmei = (cols[colMap.hinmei] || '').trim();
+        if(!hinmei){ skipCnt++; continue; }
+        newItems.push({
+          hinmei,
+          model: colMap.model >= 0 ? (cols[colMap.model] || '').trim() : '',
+          unit:  colMap.unit >= 0  ? (cols[colMap.unit]  || '').trim() : '',
+          price: colMap.price >= 0 ? parseFloat((cols[colMap.price] || '0').replace(/,/g,'')) || 0 : 0,
+          cat:   colMap.cat >= 0   ? (cols[colMap.cat]   || '').trim() : '',
+        });
+      }
+
+      if(newItems.length === 0){
+        msg.style.color = '#c62828';
+        msg.textContent = '有効なデータが見つかりませんでした。';
+        input.value = '';
+        return;
+      }
+
+      if(!confirm(`${newItems.length}件の部材を取り込みます。\n既存のマスターデータは全て上書きされます。\n\nよろしいですか？`)){
+        input.value = '';
+        return;
+      }
+
+      // 上書き保存
+      masterItems = newItems;
+      await saveMaster();
+      renderMasterTable();
+
+      msg.style.color = '#2e7d32';
+      msg.textContent = `✅ ${newItems.length}件を取り込みました。${skipCnt > 0 ? `（${skipCnt}行スキップ）` : ''}`;
+      showToast(`部材マスター ${newItems.length}件を取り込みました`);
+    } catch(err) {
+      msg.style.color = '#c62828';
+      msg.textContent = `エラー：${err.message}`;
+    }
+    input.value = '';
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+function findCol(header, candidates){
+  for(const c of candidates){
+    const idx = header.findIndex(h => h === c || h.toLowerCase() === c.toLowerCase());
+    if(idx >= 0) return idx;
+  }
+  return -1;
+}
+
+function parseCSVLine(line){
+  const result = [];
+  let cur = '';
+  let inQuote = false;
+  for(let i = 0; i < line.length; i++){
+    const ch = line[i];
+    if(ch === '"'){
+      if(inQuote && line[i+1] === '"'){ cur += '"'; i++; }
+      else inQuote = !inQuote;
+    } else if(ch === ',' && !inQuote){
+      result.push(cur);
+      cur = '';
+    } else {
+      cur += ch;
+    }
+  }
+  result.push(cur);
+  return result;
+}
+
+function downloadMasterCSV(){
+  if(masterItems.length === 0){ showToast('マスターデータがありません'); return; }
+  // BOM付きUTF-8でExcelでも文字化けしないようにする
+  let csv = '\uFEFF品名,型番,単位,単価,カテゴリ\n';
+  csv += masterItems.map(m =>
+    [m.hinmei, m.model||'', m.unit, m.price, m.cat].map(v => `"${String(v||'').replace(/"/g,'""')}"`).join(',')
+  ).join('\n');
+  const blob = new Blob([csv], {type: 'text/csv;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = '部材マスター.csv';
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast('CSVをエクスポートしました');
+}
+
+function openMasterModal(){
+  renderMasterTable();
+  document.getElementById('master-modal').classList.add('open');
+}
+function closeMasterModal(){
+  document.getElementById('master-modal').classList.remove('open');
+}
+
+// ========== Excel出力（クリップボードコピー方式） ==========
+function exportExcel(){
+  if(categories.length===0){showToast('明細が空です');return;}
+
+  const no = currentEstimateId
+    ? (estimates.find(e=>e.id===currentEstimateId)?.no || generateEstimateNo())
+    : generateEstimateNo();
+
+  const kokiFrom = document.getElementById('f-koki-from').value;
+  const kokiTo   = document.getElementById('f-koki-to').value;
+  const taxRate  = document.getElementById('tax-rate').value;
+  const sub      = calcGrandSubtotal();
+  const tax      = Math.round(sub * parseInt(taxRate) / 100);
+
+  const fmt = d => {
+    if(!d) return '';
+    const dt = new Date(d);
+    return `${dt.getFullYear()}年${dt.getMonth()+1}月${dt.getDate()}日`;
+  };
+
+  const data = {
+    no,
+    client:    document.getElementById('f-client').value,
+    title:     document.getElementById('f-title').value,
+    koki_from: kokiFrom,
+    koki_to:   kokiTo,
+    koki:      kokiFrom ? fmt(kokiFrom)+'～'+fmt(kokiTo)+'（予定）' : '',
+    place:     document.getElementById('f-place').value,
+    payment:   document.getElementById('f-payment').value,
+    expiry:    document.getElementById('f-expiry').value,
+    note:      document.getElementById('f-note').value,
+    tax_rate:  parseInt(taxRate),
+    subtotal:  sub,
+    tax_amount: tax,
+    grand_total: sub + tax,
+    categories: categories.map(c=>({
+      name: c.name,
+      rows: c.rows.filter(r=>r.hinmei.trim()).map(r=>({
+        hinmei: r.hinmei,
+        qty:    parseFloat(r.qty)||0,
+        unit:   r.unit,
+        tanka:  parseFloat(String(r.tanka).replace(/,/g,''))||0,
+        biko:   r.biko||''
+      }))
+    })).filter(c=>c.rows.length>0)
+  };
+
+  const jsonStr = JSON.stringify(data);
+  document.getElementById('json-textarea').value = jsonStr;
+  document.getElementById('copy-ok').style.display = 'none';
+  document.getElementById('json-modal').classList.add('open');
+
+  // 履歴を出力済みに更新
+  if(currentEstimateId){
+    const idx=estimates.findIndex(e=>e.id===currentEstimateId);
+    if(idx>=0){estimates[idx].status='exported'; localStorage.setItem('mitumori_estimates',JSON.stringify(estimates));}
+  }
+}
+
+function copyJson(){
+  const ta = document.getElementById('json-textarea');
+  navigator.clipboard.writeText(ta.value).then(()=>{
+    document.getElementById('copy-ok').style.display = 'block';
+    showToast('コピーしました！');
+  }).catch(()=>{
+    ta.select();
+    document.execCommand('copy');
+    document.getElementById('copy-ok').style.display = 'block';
+    showToast('コピーしました！');
+  });
+}
+
+function closeJsonModal(){
+  document.getElementById('json-modal').classList.remove('open');
+}
+// ========== プレビュー ==========
+function openPreview(){
+  const content = document.getElementById('preview-content');
+  content.innerHTML = buildPreviewHTML();
+  document.getElementById('preview-modal').classList.add('open');
+}
+function closePreview(){
+  document.getElementById('preview-modal').classList.remove('open');
+}
+
+function buildPreviewHTML(){
+  const client  = document.getElementById('f-client').value || '（未入力）';
+  const title   = document.getElementById('f-title').value || '（未入力）';
+  const kokiFrom = document.getElementById('f-koki-from').value;
+  const kokiTo   = document.getElementById('f-koki-to').value;
+  const koki = kokiFrom ? fmtDate(kokiFrom)+'～'+fmtDate(kokiTo)+'（予定）' : '（未入力）';
+  const place   = document.getElementById('f-place').value || '（未入力）';
+  const payment = document.getElementById('f-payment').value;
+  const expiry  = document.getElementById('f-expiry').value;
+  const note    = document.getElementById('f-note').value;
+  const taxRate = parseInt(document.getElementById('tax-rate').value);
+  const sub     = calcGrandSubtotal();
+  const tax     = Math.round(sub * taxRate / 100);
+  const grand   = sub + tax;
+  const no      = document.getElementById('estimate-no-display').textContent.replace('見積番号：','') || '自動採番';
+  const today   = new Date().toLocaleDateString('ja-JP',{year:'numeric',month:'long',day:'numeric'});
+
+  const sheet1 = `
+  <div style="background:#fff;border-radius:8px;padding:0;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.1)">
+    <div style="background:#1565c0;color:#fff;padding:8px 16px;font-size:12px;font-weight:600">No.1 ― 見積書（表紙）</div>
+    <div style="padding:24px 28px;font-family:'ＭＳ Ｐゴシック','MS PGothic',sans-serif">
+      <div style="text-align:center;font-size:22px;font-weight:bold;letter-spacing:8px;border-bottom:3px double #333;padding-bottom:12px;margin-bottom:20px">御　見　積　書</div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:20px">
+        <div style="font-size:13px">
+          <div style="font-size:15px;font-weight:bold;border-bottom:2px solid #333;padding-bottom:4px;margin-bottom:8px">${esc(client)}　御中</div>
+          <div style="margin-top:16px;font-size:13px">※ 下記の通り御見積申し上げます。</div>
+        </div>
+        <div style="text-align:right;font-size:11px;color:#555">
+          <div>見積番号　${esc(no)}</div>
+          <div>${today}</div>
+          <div style="margin-top:8px;font-size:12px">堺総合サービス　株式会社</div>
+        </div>
+      </div>
+      <table style="width:100%;border-collapse:collapse;margin-bottom:16px">
+        <tr>
+          <td style="border:1px solid #333;background:#ddeaf7;font-weight:bold;padding:6px 10px;width:80px;font-size:12px">金額</td>
+          <td style="border:1px solid #333;padding:6px 10px;font-size:16px;font-weight:bold;color:#1565c0">¥${fmtNum(grand)}　${taxRate>0?'（税抜）':''}</td>
+        </tr>
+      </table>
+      <div style="font-size:11px;color:#666;margin-bottom:12px">本書には消費税が含まれておりません。</div>
+      <table style="width:100%;border-collapse:collapse;font-size:12px">
+        ${[
+          ['件名',esc(title)],
+          ['工期',esc(koki)],
+          ['工事場所',esc(place)],
+          ['支払条件',esc(payment)],
+          ['見積有効期限',esc(expiry)],
+          ['備考',esc(note)||'－'],
+        ].map(([k,v])=>`
+        <tr>
+          <td style="border:1px solid #ccc;background:#f5f9ff;padding:5px 10px;width:100px;font-weight:600;color:#1565c0">${k}</td>
+          <td style="border:1px solid #ccc;padding:5px 10px">${v}</td>
+        </tr>`).join('')}
+      </table>
+    </div>
+  </div>`;
+
+  const validCats = categories.filter(c=>c.rows.some(r=>r.hinmei.trim()));
+  const sheets = validCats.map((cat, ci) => {
+    const rows = cat.rows.filter(r=>r.hinmei.trim());
+    const catSub = rows.reduce((s,r)=>s+parseNum(r.qty)*parseNum(r.tanka),0);
+    const rowsHTML = rows.map(r=>{
+      const kg = parseNum(r.qty)*parseNum(r.tanka);
+      return `<tr>
+        <td style="border:1px solid #ccc;padding:4px 8px">${esc(r.hinmei)}</td>
+        <td style="border:1px solid #ccc;padding:4px 8px;text-align:right">${r.qty}</td>
+        <td style="border:1px solid #ccc;padding:4px 8px;text-align:center">${esc(r.unit)}</td>
+        <td style="border:1px solid #ccc;padding:4px 8px;text-align:right">¥${fmtNum(parseNum(r.tanka))}</td>
+        <td style="border:1px solid #ccc;padding:4px 8px;text-align:right;font-weight:500;color:#1565c0">¥${fmtNum(kg)}</td>
+        <td style="border:1px solid #ccc;padding:4px 8px;color:#888;font-size:11px">${esc(r.biko||'')}</td>
+      </tr>`;
+    }).join('');
+    return `
+    <div style="background:#fff;border-radius:8px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.1)">
+      <div style="background:#1976d2;color:#fff;padding:8px 16px;font-size:12px;font-weight:600">No.${ci+2} ― 明細書（${esc(cat.name)}）</div>
+      <div style="padding:16px 20px;font-family:'ＭＳ Ｐゴシック','MS PGothic',sans-serif">
+        <div style="font-size:13px;font-weight:bold;border-bottom:2px solid #1565c0;padding-bottom:6px;margin-bottom:12px;color:#1565c0">▶ ${esc(cat.name)}</div>
+        <table style="width:100%;border-collapse:collapse;font-size:12px">
+          <thead>
+            <tr style="background:#ddeaf7">
+              <th style="border:1px solid #c5d9f0;padding:5px 8px;text-align:left;width:35%">品名</th>
+              <th style="border:1px solid #c5d9f0;padding:5px 8px;text-align:right;width:9%">数量</th>
+              <th style="border:1px solid #c5d9f0;padding:5px 8px;text-align:center;width:8%">単位</th>
+              <th style="border:1px solid #c5d9f0;padding:5px 8px;text-align:right;width:13%">単価</th>
+              <th style="border:1px solid #c5d9f0;padding:5px 8px;text-align:right;width:13%">金額</th>
+              <th style="border:1px solid #c5d9f0;padding:5px 8px;text-align:left">備考</th>
+            </tr>
+          </thead>
+          <tbody>${rowsHTML}</tbody>
+          <tfoot>
+            <tr style="background:#f0f7ff">
+              <td colspan="4" style="border:1px solid #c5d9f0;padding:6px 8px;text-align:right;font-weight:600;color:#555">小計</td>
+              <td style="border:1px solid #c5d9f0;padding:6px 8px;text-align:right;font-weight:700;color:#1565c0">¥${fmtNum(catSub)}</td>
+              <td style="border:1px solid #c5d9f0"></td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>`;
+  }).join('');
+
+  // 合計サマリー
+  const summary = `
+  <div style="background:#fff;border-radius:8px;padding:16px 24px;box-shadow:0 2px 8px rgba(0,0,0,.1)">
+    <div style="display:flex;flex-direction:column;gap:8px;max-width:320px;margin-left:auto">
+      <div style="display:flex;justify-content:space-between;font-size:13px">
+        <span style="color:#5c7a9e">小計合計（税抜）</span><span>¥${fmtNum(sub)}</span>
+      </div>
+      ${taxRate>0?`<div style="display:flex;justify-content:space-between;font-size:13px">
+        <span style="color:#5c7a9e">消費税（${taxRate}%）</span><span>¥${fmtNum(tax)}</span>
+      </div>`:''}
+      <div style="display:flex;justify-content:space-between;font-size:17px;font-weight:700;border-top:2px solid #ddeaf7;padding-top:10px;color:#1565c0">
+        <span>合計金額</span><span>¥${fmtNum(grand)}</span>
+      </div>
+    </div>
+  </div>`;
+
+  return sheet1 + (validCats.length > 0 ? sheets + summary : '');
+}
+
+function fmtDate(d){
+  if(!d) return '';
+  const dt = new Date(d);
+  return `${dt.getFullYear()}年${dt.getMonth()+1}月${dt.getDate()}日`;
+}
+
+
+function setCellValue(ws, addr, val){
+  if(!ws[addr]) ws[addr]={};
+  ws[addr].t = 's';
+  ws[addr].v = String(val||'');
+  ws[addr].w = String(val||'');
+  delete ws[addr].f;
+}
+function setCellNum(ws, addr, val){
+  if(!ws[addr]) ws[addr]={};
+  ws[addr].t = 'n';
+  ws[addr].v = val;
+  ws[addr].w = val.toLocaleString('ja-JP');
+  delete ws[addr].f;
+}
+function deepCopySheet(ws){
+  return JSON.parse(JSON.stringify(ws));
+}
+function formatDate(dateStr){
+  if(!dateStr) return '';
+  const d=new Date(dateStr);
+  return `${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日`;
+}
+
+// ========== クリア ==========
+function clearForm(){
+  if(!confirm('入力内容をすべてクリアしますか？')) return;
+  ['f-client','f-title','f-koki-from','f-koki-to','f-place','f-note'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('f-payment').value='金融機関の口座振込';
+  document.getElementById('f-expiry').value='発行日より30日間';
+  document.getElementById('tax-rate').value='10';
+  categories=[];
+  catIdSeq=0;
+  currentEstimateId=null;
+  renderCategories();
+  updateTotal();
+  document.getElementById('estimate-no-display').textContent='見積番号：自動採番';
+}
+
+
+// ========== バックアップ・復元 ==========
+function openBackupModal(){
+  // 統計表示
+  const stats = document.getElementById('backup-stats');
+  stats.innerHTML =
+    `部材マスター：<strong>${masterItems.length} 件</strong><br>` +
+    `見積履歴：<strong>${estimates.length} 件</strong><br>` +
+    `最終保存：<strong>${localStorage.getItem('mitumori_last_backup') || '未バックアップ'}</strong>`;
+  // 前回バックアップ日時
+  const lastSaved = document.getElementById('backup-last-saved');
+  const last = localStorage.getItem('mitumori_last_backup');
+  lastSaved.textContent = last ? `前回のバックアップ：${last}` : '※まだバックアップされていません';
+  document.getElementById('restore-msg').textContent = '';
+  document.getElementById('backup-modal').classList.add('open');
+}
+function closeBackupModal(){
+  document.getElementById('backup-modal').classList.remove('open');
+}
+
+function downloadBackup(){
+  const backup = {
+    version: '1.0',
+    savedAt: new Date().toLocaleString('ja-JP'),
+    masterItems,
+    estimates
+  };
+  const json = JSON.stringify(backup, null, 2);
+  const blob = new Blob([json], {type: 'application/json'});
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  const date = new Date().toISOString().slice(0,10);
+  a.href     = url;
+  a.download = `見積書バックアップ_${date}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+
+  const now = new Date().toLocaleString('ja-JP');
+  localStorage.setItem('mitumori_last_backup', now);
+  document.getElementById('backup-last-saved').textContent = `前回のバックアップ：${now}`;
+  showToast('バックアップを保存しました');
+}
+
+function restoreBackup(input){
+  const file = input.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const data = JSON.parse(e.target.result);
+      // バリデーション
+      if(!data.masterItems || !data.estimates){
+        throw new Error('形式が正しくありません');
+      }
+      if(!confirm(`復元しますか？\n\n部材マスター：${data.masterItems.length}件\n見積履歴：${data.estimates.length}件\n保存日時：${data.savedAt||'不明'}\n\n現在のデータは上書きされます。`)){
+        input.value = '';
+        return;
+      }
+      // 復元
+      masterItems = data.masterItems;
+      estimates   = data.estimates;
+      saveMaster();
+      localStorage.setItem('mitumori_estimates', JSON.stringify(estimates));
+      localStorage.setItem('mitumori_last_backup', data.savedAt || '');
+
+      const msg = document.getElementById('restore-msg');
+      msg.style.color = '#2e7d32';
+      msg.textContent = `✅ 復元完了！部材マスター${masterItems.length}件・履歴${estimates.length}件を復元しました。`;
+      showToast('復元しました！');
+
+      // 統計更新
+      openBackupModal();
+    } catch(err) {
+      const msg = document.getElementById('restore-msg');
+      msg.style.color = '#c62828';
+      msg.textContent = `❌ 読み込みエラー：${err.message}`;
+    }
+    input.value = '';
+  };
+  reader.readAsText(file, 'utf-8');
+}
+
+// ========== ユーティリティ ==========
+function fmtNum(n){ return Math.round(n).toLocaleString('ja-JP'); }
+function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2800);
+}
+
+// モーダルオーバーレイ閉じる
+document.getElementById('hist-modal').addEventListener('click',function(e){
+  if(e.target===this) closeHistModal();
+});
+document.getElementById('master-modal').addEventListener('click',function(e){
+  if(e.target===this) closeMasterModal();
+});
+
+// ========== 初期化 ==========
+// Firebase SDKのロードを待ってから認証リスナーを開始
+function waitForFirebase(){
+  if(window.fbOnAuthStateChanged && window.fbAuth){
+    initAuthListener();
+  } else {
+    setTimeout(waitForFirebase, 100);
+  }
+}
+waitForFirebase();
+</script>
+</body>
+</html>
