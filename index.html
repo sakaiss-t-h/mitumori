@@ -1693,15 +1693,32 @@ function deleteMasterItem(idx){
 }
 function renderMasterTable(){
   document.getElementById('master-tbody').innerHTML=masterItems.map((m,i)=>`
-    <tr>
-      <td>${esc(m.hinmei)}</td>
-      <td>${esc(m.model||'')}</td>
-      <td>${esc(m.unit)}</td>
-      <td style="text-align:right">¥${fmtNum(m.price)}</td>
-      <td>${esc(m.cat||'')}</td>
+    <tr id="mrow-${i}">
+      <td><input type="text" value="${esc(m.hinmei)}"
+        style="width:100%;border:1px solid #ddd;border-radius:4px;padding:4px 6px;font-size:12px;background:#fff"
+        onchange="updateMasterItem(${i},'hinmei',this.value)"></td>
+      <td><input type="text" value="${esc(m.model||'')}"
+        style="width:100%;border:1px solid #ddd;border-radius:4px;padding:4px 6px;font-size:12px;background:#fff"
+        onchange="updateMasterItem(${i},'model',this.value)"></td>
+      <td><input type="text" value="${esc(m.unit)}"
+        style="width:100%;border:1px solid #ddd;border-radius:4px;padding:4px 6px;font-size:12px;background:#fff"
+        onchange="updateMasterItem(${i},'unit',this.value)"></td>
+      <td><input type="number" value="${m.price||0}"
+        style="width:100%;border:1px solid #ddd;border-radius:4px;padding:4px 6px;font-size:12px;background:#fff;text-align:right"
+        onchange="updateMasterItem(${i},'price',parseFloat(this.value)||0)"></td>
+      <td><input type="text" value="${esc(m.cat||'')}"
+        style="width:100%;border:1px solid #ddd;border-radius:4px;padding:4px 6px;font-size:12px;background:#fff"
+        onchange="updateMasterItem(${i},'cat',this.value)"></td>
       <td><button class="row-btn del btn-sm" onclick="deleteMasterItem(${i})">削除</button></td>
     </tr>
   `).join('');
+}
+
+function updateMasterItem(i, field, val){
+  if(!masterItems[i]) return;
+  masterItems[i][field] = val;
+  saveMaster();
+  showToast('マスターを更新しました');
 }
 
 // ========== 部材マスター CSV取り込み・エクスポート ==========
