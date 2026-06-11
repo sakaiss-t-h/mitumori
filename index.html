@@ -6,7 +6,7 @@
 <title>見積書作成</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Meiryo','Hiragino Kaku Gothic ProN',sans-serif;font-size:14px;background:#eef4fb;color:#1a1a1a;min-height:100vh}
+body{font-family:'Meiryo','Hiragino Kaku Gothic ProN',sans-serif;font-size:14px;background:#e8f0fa;color:#1a1a1a;min-height:100vh}
 a{color:inherit}
 
 /* レイアウト */
@@ -17,8 +17,8 @@ a{color:inherit}
 .app-header-right{display:flex;gap:8px}
 
 .main{max-width:900px;margin:0 auto;padding:20px 16px 80px}
-.section{background:#fff;border:1px solid #c5d9f0;border-radius:10px;padding:20px;margin-bottom:16px}
-.section-title{font-size:14px;font-weight:600;margin-bottom:16px;display:flex;align-items:center;gap:8px;color:#1565c0;border-bottom:2px solid #e3f2fd;padding-bottom:10px}
+.section{background:#fff;border:2px solid #1565c0;border-radius:10px;padding:20px;margin-bottom:16px}
+.section-title{font-size:17px;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:8px;color:#0d47a1;border-bottom:3px solid #1565c0;padding-bottom:10px}
 .section-title svg{flex-shrink:0;color:#1976d2}
 
 /* フォーム */
@@ -26,11 +26,11 @@ a{color:inherit}
 .form-grid.three{grid-template-columns:1fr 1fr 1fr}
 .form-group{display:flex;flex-direction:column;gap:5px}
 .form-group.full{grid-column:1/-1}
-.form-label{font-size:11px;color:#5c7a9e;font-weight:500}
+.form-label{font-size:14px;color:#222;font-weight:700}
 .form-label .default-tag{font-size:10px;background:#e8f4e8;color:#2e7d32;padding:1px 5px;border-radius:3px;margin-left:4px}
-.form-input{padding:7px 10px;font-size:13px;border:1px solid #b8d0ea;border-radius:6px;background:#f5f9ff;color:#1a1a1a;width:100%;transition:border-color .15s,background .15s}
-.form-input:focus{outline:none;border-color:#1976d2;background:#fff}
-.form-input:hover{border-color:#7bafd4;background:#fff}
+.form-input{padding:11px 13px;font-size:15px;border:2px solid #7bafd4;border-radius:8px;background:#ffffff;color:#222;width:100%;transition:border-color .15s}
+.form-input:focus{outline:none;border-color:#0d47a1;background:#fff}
+.form-input:hover{border-color:#1565c0;}
 textarea.form-input{resize:none;height:52px}
 .koki-row{display:flex;align-items:center;gap:8px}
 .koki-row input{flex:1}
@@ -41,7 +41,7 @@ textarea.form-input{resize:none;height:52px}
 .tax-row select{width:auto;padding:5px 8px;font-size:13px;border:1px solid #b8d0ea;border-radius:6px;background:#f5f9ff;cursor:pointer}
 
 /* カテゴリブロック */
-.cat-block{border:1px solid #c5d9f0;border-radius:8px;margin-bottom:12px;overflow:visible}
+.cat-block{border:2px solid #1565c0;border-radius:8px;margin-bottom:12px;overflow:visible}
 .cat-header{background:#ddeaf7;padding:8px 12px;display:flex;align-items:center;gap:8px;border-radius:8px 8px 0 0;border-bottom:1px solid #c5d9f0;position:relative}
 .cat-no{font-size:11px;color:#7bafd4;min-width:28px;flex-shrink:0}
 .cat-input-wrap{flex:1;position:relative}
@@ -55,6 +55,29 @@ textarea.form-input{resize:none;height:52px}
 .dd-item:hover,.dd-item.active{background:#ddeaf7;color:#1565c0}
 .dd-item.new-item{color:#888;font-style:italic;border-top:1px solid #eee}
 .dd-item.new-item:hover{background:#e8f5e9;color:#2e7d32}
+
+/* シートタブ */
+.sheet-tabs-wrap{margin-bottom:0}
+.sheet-tabs{display:flex;gap:3px;padding:0 2px;flex-wrap:wrap}
+.sheet-tab{padding:9px 18px;font-size:14px;font-weight:700;border:2px solid #1565c0;border-bottom:none;border-radius:6px 6px 0 0;cursor:pointer;background:#ddeaf7;color:#5c7a9e;display:flex;align-items:center;gap:6px;white-space:nowrap}
+.sheet-tab.active{background:#fff;color:#0d47a1;font-weight:700;border-color:#1565c0;border-bottom:1px solid #fff;margin-bottom:-1px;z-index:1}
+.sheet-tab .tab-del{font-size:11px;color:#aaa;cursor:pointer;padding:0 2px;border:none;background:none;line-height:1}
+.sheet-tab .tab-del:hover{color:#f44336}
+.add-sheet-tab{padding:9px 12px;font-size:14px;font-weight:700;border:1px dashed #7bafd4;border-bottom:none;border-radius:6px 6px 0 0;cursor:pointer;background:none;color:#7bafd4}
+.add-sheet-tab:hover{background:#e8f0fa;color:#1976d2}
+.sheet-body{border:1px solid #1565c0;border-radius:0 6px 6px 6px;background:#fff;overflow:visible;position:relative}
+.sheet-header-bar{background:#ddeaf7;padding:10px 14px;display:flex;align-items:center;gap:8px;border-bottom:1px solid #c5d9f0}
+.sheet-header-bar span{font-size:12px;color:#5c7a9e}
+.row-counter{margin-left:auto;font-size:13px;font-weight:700;color:#0d47a1;background:#e3f2fd;padding:3px 10px;border-radius:16px;border:1px solid #90caf9}
+.row-counter.warn{color:#e65100}
+.row-counter.full{color:#f44336}
+/* タイトル行 */
+.title-row-tr td{background:#bbdefb;padding:5px 4px}
+.title-row-tr td input{background:#e3f2fd !important;font-weight:700;color:#0d47a1 !important;text-align:center;border-color:#1565c0 !important;font-size:15px !important}
+/* シートアクションバー */
+.sheet-action-bar{display:flex;gap:6px;padding:8px 10px;border-top:1px solid #eef4fb}
+.btn-title{padding:9px 16px;font-size:14px;font-weight:700;border:2px solid #1565c0;border-radius:8px;cursor:pointer;background:#e3f2fd;color:#0d47a1;display:flex;align-items:center;gap:6px}
+.btn-title:hover{background:#bbdefb}
 .cat-del-btn{background:none;border:1px solid #b8d0ea;border-radius:6px;color:#7bafd4;cursor:pointer;padding:4px 7px;display:flex;align-items:center;flex-shrink:0;transition:all .15s}
 .cat-del-btn:hover{border-color:#f44336;color:#f44336}
 
@@ -62,18 +85,18 @@ textarea.form-input{resize:none;height:52px}
 .detail-table{width:100%;border-collapse:collapse;font-size:12px}
 .detail-table th{background:#ddeaf7;color:#5c7a9e;font-weight:600;padding:6px 6px;text-align:center;border-bottom:1px solid #c5d9f0;white-space:nowrap}
 .detail-table td{padding:3px 4px;border-bottom:1px solid #eef4fb}
-.detail-table td input{border:1px solid #b8d0ea;border-radius:5px;padding:5px 7px;font-size:12px;background:#f5f9ff;color:#1a1a1a;width:100%;transition:border-color .15s,background .15s}
-.detail-table td input:hover{border-color:#7bafd4;background:#fff}
-.detail-table td input:focus{outline:none;border-color:#1976d2;background:#fff}
+.detail-table td input{border:2px solid #90caf9;border-radius:6px;padding:8px 8px;font-size:14px;background:#ffffff;color:#222;width:100%;transition:border-color .15s}
+.detail-table td input:hover{border-color:#1565c0;}
+.detail-table td input:focus{outline:none;border-color:#0d47a1;background:#fff}
 .detail-table td input::placeholder{color:#b0c8e0}
 .detail-table td.r input{text-align:right}
-.detail-table td.amount-cell{text-align:right;padding-right:8px;font-size:12px;color:#1565c0;font-weight:500}
+.detail-table td.amount-cell{text-align:right;padding-right:8px;font-size:14px;color:#0d47a1;font-weight:700}
 .detail-table td.amount-cell.zero{color:#c0d4e8}
 .detail-table tfoot td{padding:6px 8px;font-size:12px;font-weight:600}
-.subtotal-row td{background:#eef4fb}
+.subtotal-row td{background:#e3f2fd}
 .cat-label-tr td{padding:5px 10px;font-size:11px;font-weight:700;color:#1976d2;background:#e8f2fb;letter-spacing:.04em}
 .add-row-btn{width:100%;padding:7px;font-size:12px;color:#7bafd4;background:none;border:none;border-top:1px solid #ddeaf7;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:4px;transition:all .15s}
-.add-row-btn:hover{background:#eef4fb;color:#1976d2}
+.add-row-btn:hover{background:#e8f0fa;color:#1976d2}
 
 /* 品名サジェスト */
 .hinmei-wrap{position:relative}
@@ -93,12 +116,12 @@ textarea.form-input{resize:none;height:52px}
 .add-cat-btn{width:100%;padding:10px;font-size:13px;border:1px dashed #7bafd4;border-radius:8px;background:none;color:#7bafd4;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:all .15s;margin-bottom:4px}
 .add-cat-btn:hover{border-color:#1976d2;color:#1976d2;background:#eef4fb}
 
-.total-section{background:#fff;border:1px solid #c5d9f0;border-radius:10px;padding:16px 20px;margin-bottom:16px}
+.total-section{background:#fff;border:2px solid #1565c0;border-radius:10px;padding:16px 20px;margin-bottom:16px}
 .total-inner{display:flex;flex-direction:column;gap:8px}
 .total-line{display:flex;justify-content:space-between;align-items:center;font-size:13px}
 .total-line .lbl{color:#5c7a9e}
-.total-line.grand{font-size:19px;font-weight:700;border-top:2px solid #ddeaf7;padding-top:12px;margin-top:2px;color:#1565c0}
-.total-line.grand .lbl{color:#1565c0}
+.total-line.grand{font-size:22px;font-weight:700;border-top:3px solid #1565c0;padding-top:14px;margin-top:4px;color:#0d47a1}
+.total-line.grand .lbl{color:#0d47a1}
 
 /* ボタン */
 .btn{padding:8px 16px;font-size:13px;border:1px solid rgba(255,255,255,.3);border-radius:7px;cursor:pointer;background:rgba(255,255,255,.15);color:#fff;display:inline-flex;align-items:center;gap:6px;transition:all .15s;white-space:nowrap}
@@ -167,8 +190,8 @@ textarea.form-input{resize:none;height:52px}
 <body>
 
 <!-- ログイン画面 -->
-<div id="login-screen" style="position:fixed;inset:0;background:#eef4fb;z-index:1000;display:flex;align-items:center;justify-content:center">
-  <div style="background:#fff;border-radius:16px;padding:40px 36px;width:min(380px,92vw);border:1px solid #c5d9f0;box-shadow:0 4px 24px rgba(21,101,192,.1)">
+<div id="login-screen" style="position:fixed;inset:0;background:#e8f0fa;z-index:1000;display:flex;align-items:center;justify-content:center">
+  <div style="background:#fff;border-radius:16px;padding:40px 36px;width:min(380px,92vw);border:2px solid #1565c0;box-shadow:0 4px 24px rgba(21,101,192,.1)">
     <div style="text-align:center;margin-bottom:28px">
       <div style="font-size:22px;font-weight:700;color:#1565c0;margin-bottom:6px">見積書作成</div>
       <div style="font-size:13px;color:#5c7a9e">堺総合サービス　株式会社</div>
@@ -230,7 +253,7 @@ window.fbDeleteDoc = deleteDoc;
 <div class="app-header">
   <div class="app-header-left">
     <span class="app-title">見積書作成</span>
-    <span class="estimate-no" id="estimate-no-display">見積番号：自動採番</span>
+<span class="estimate-no" id="estimate-no-display"></span>
   </div>
   <div class="app-header-right">
     <button class="btn" onclick="openBackupModal()">💾 バックアップ</button>
@@ -250,6 +273,17 @@ window.fbDeleteDoc = deleteDoc;
     <div class="section-title">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
       表紙情報
+    </div>
+    <div class="form-grid" style="margin-bottom:12px">
+      <div class="form-group">
+        <label class="form-label">見積番号</label>
+        <input class="form-input" id="estimate-no-input" type="text" placeholder="自動採番"
+          oninput="currentEstimateNo=this.value">
+      </div>
+      <div class="form-group">
+        <label class="form-label">発行日</label>
+        <input class="form-input" id="f-date" type="date">
+      </div>
     </div>
     <div class="form-grid" style="margin-bottom:12px">
       <div class="form-group">
@@ -294,8 +328,8 @@ window.fbDeleteDoc = deleteDoc;
     <div class="tax-row">
       <label>消費税</label>
       <select id="tax-rate" onchange="updateTotal()">
-        <option value="0">なし（税抜のみ）</option>
-        <option value="10" selected>10%</option>
+        <option value="0" selected>なし（税抜のみ）</option>
+        <option value="10">10%</option>
         <option value="8">8%（軽減税率）</option>
       </select>
     </div>
@@ -307,8 +341,16 @@ window.fbDeleteDoc = deleteDoc;
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
       明細
     </div>
-    <div id="cat-container"></div>
-    <button class="add-cat-btn" onclick="addCategory()">＋ カテゴリを追加</button>
+    <div class="sheet-tabs-wrap">
+      <div class="sheet-tabs" id="sheet-tabs"></div>
+    </div>
+    <div class="sheet-body">
+      <div class="sheet-header-bar">
+        <span id="sheet-header-label">No.2</span>
+        <span class="row-counter" id="row-counter">0 / 25行</span>
+      </div>
+      <div id="sheet-content"></div>
+    </div>
   </div>
 
   <!-- 合計 -->
@@ -322,9 +364,9 @@ window.fbDeleteDoc = deleteDoc;
 
   <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:4px">
     <button class="btn" style="background:#fff;color:#1565c0;border:1px solid #90caf9" onclick="openPreview()">👁 プレビュー</button>
-    <button class="btn" style="background:#fff;color:#555;border:1px solid #c5d9f0" onclick="clearForm()">🗑 クリア</button>
-    <button class="btn" style="background:#fff;color:#1565c0;border:1px solid #90caf9" onclick="saveEstimate()">💾 保存</button>
-    <button class="btn btn-primary" style="background:#1565c0;color:#fff;border-color:#1565c0" onclick="exportExcel()">⬇ Excel出力</button>
+    <button class="btn" style="background:#ffebee;color:#c62828;border:2px solid #c62828;font-size:14px;font-weight:700;padding:10px 18px" onclick="clearForm()">🗑 クリア</button>
+    <button class="btn" style="background:#ffffff;color:#1565c0;border:2px solid #1565c0;font-size:14px;font-weight:700;padding:10px 18px" onclick="saveEstimate()">💾 保存</button>
+    <button class="btn btn-primary" style="background:#1565c0;color:#ffffff;border:2px solid #1565c0;font-size:14px;font-weight:700;padding:10px 18px" onclick="exportExcel()">⬇ Excel出力</button>
   </div>
 </div>
 
@@ -423,6 +465,39 @@ window.fbDeleteDoc = deleteDoc;
   </div>
 </div>
 
+<!-- マスター選択モーダル -->
+<div class="modal-overlay" id="master-select-modal" onclick="if(event.target===this)closeMasterSelectModal()">
+  <div class="modal" onclick="event.stopPropagation()" style="width:min(700px,95vw);max-height:85vh">
+    <div class="modal-header">
+      <span class="modal-title">📋 部材マスターから選択</span>
+      <button class="modal-close" onclick="closeMasterSelectModal()">×</button>
+    </div>
+    <div class="modal-body" style="display:flex;flex-direction:column;gap:12px">
+      <div style="display:flex;gap:8px">
+        <input type="text" id="ms-search" placeholder="品名・型番で検索..."
+          style="flex:1;padding:10px 12px;font-size:14px;border:2px solid #7bafd4;border-radius:8px;background:#fff;color:#222"
+          oninput="renderMasterSelectList()">
+        <select id="ms-cat-filter"
+          style="padding:10px 12px;font-size:14px;border:2px solid #7bafd4;border-radius:8px;background:#fff;color:#222;cursor:pointer"
+          onchange="renderMasterSelectList()">
+          <option value="">全カテゴリ</option>
+        </select>
+      </div>
+      <div style="font-size:13px;color:#5c7a9e;display:flex;align-items:center;gap:8px">
+        <input type="checkbox" id="ms-check-all" onchange="toggleAllMasterSelect(this.checked)"
+          style="width:16px;height:16px;cursor:pointer">
+        <label for="ms-check-all" style="cursor:pointer">すべて選択</label>
+        <span id="ms-selected-count" style="margin-left:auto;font-weight:700;color:#1565c0"></span>
+      </div>
+      <div id="ms-list" style="overflow-y:auto;max-height:400px;border:2px solid #c5d9f0;border-radius:8px"></div>
+      <div style="display:flex;gap:8px;justify-content:flex-end">
+        <button class="btn" style="background:#fff;color:#555;border:1px solid #ccc;font-size:14px;padding:10px 18px" onclick="closeMasterSelectModal()">キャンセル</button>
+        <button class="btn" style="background:#2e7d32;color:#fff;border:none;font-size:14px;font-weight:700;padding:10px 24px" onclick="addSelectedMasterItems()">✅ 選択した品目を追加</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- バックアップ・復元モーダル -->
 <div class="modal-overlay" id="backup-modal" onclick="if(event.target===this)closeBackupModal()">
   <div class="modal" onclick="event.stopPropagation()" style="width:min(480px,95vw)">
@@ -479,9 +554,13 @@ window.fbDeleteDoc = deleteDoc;
 // ========== データ ==========
 let masterItems = [];
 let estimates = [];
-let categories = [];
+let categories = []; // 後方互換用（使わない）
+let sheets = [];     // [{id, rows:[{type:'title'|'item', text, hinmei, qty, unit, tanka, biko}]}]
+let currentSheetIdx = 0;
+let sheetIdSeq = 0;
 let catIdSeq = 0;
 let currentEstimateId = null;
+let currentEstimateNo = '';
 let currentUser = null;
 
 const DEFAULT_MASTER = [
@@ -519,7 +598,13 @@ function initAuthListener(){
       document.getElementById('login-screen').style.display = 'none';
       document.getElementById('login-user').textContent = user.email;
       await loadFromFirebase();
-      addCategory('電気工事');
+      // 発行日を今日に設定
+      const today = new Date().toISOString().slice(0,10);
+      const dateInput = document.getElementById('f-date');
+      if(dateInput && !dateInput.value) dateInput.value = today;
+      // シートを初期化
+      sheets = [];
+      addSheet();
       updateTotal();
     } else {
       currentUser = null;
@@ -549,6 +634,10 @@ async function loadFromFirebase(){
       estimates = [];
     }
     showToast('データを読み込みました');
+    // 次の見積番号を自動セット
+    const nextNo = generateEstimateNo();
+    const noInput = document.getElementById('estimate-no-input');
+    if(noInput && !noInput.value) noInput.value = nextNo;
   } catch(e) {
     console.error('Firebase読み込みエラー:', e);
     // フォールバック：localStorageから読み込み
@@ -665,20 +754,25 @@ function renderRow(catId, ri, row){
         oninput="onHinmeiInput(${catId},${ri},this.value)"
         onblur="closeHinmeiDD(${catId},${ri})"
         onchange="commitHinmei(${catId},${ri},this.value)"
+        onkeydown="if(event.key==='Enter'){event.preventDefault();enterAddRow(${catId},${ri})}"
       >
       <div class="hinmei-dropdown" id="hdd-${catId}-${ri}"></div>
     </div></td>
     <td class="r"><input type="text" value="${esc(row.qty)}" style="text-align:right"
       onchange="updateRowField(${catId},${ri},'qty',this.value)"
-      oninput="updateRowField(${catId},${ri},'qty',this.value)"></td>
+      oninput="updateRowField(${catId},${ri},'qty',this.value)"
+      onkeydown="if(event.key==='Enter'){event.preventDefault();focusRowCell(${catId},${ri},2)}"></td>
     <td><input type="text" value="${esc(row.unit)}"
-      onchange="updateRowField(${catId},${ri},'unit',this.value);syncMasterRow(${catId},${ri})"></td>
+      onchange="updateRowField(${catId},${ri},'unit',this.value);syncMasterRow(${catId},${ri})"
+      onkeydown="if(event.key==='Enter'){event.preventDefault();focusRowCell(${catId},${ri},3)}"></td>
     <td class="r"><input type="text" value="${esc(row.tanka)}" style="text-align:right"
       onchange="updateRowField(${catId},${ri},'tanka',this.value);syncMasterRow(${catId},${ri})"
-      oninput="updateRowField(${catId},${ri},'tanka',this.value)"></td>
+      oninput="updateRowField(${catId},${ri},'tanka',this.value)"
+      onkeydown="if(event.key==='Enter'){event.preventDefault();enterFromTanka(${catId},${ri})}"></td>
     <td class="${amtCls}" id="amt-${catId}-${ri}">${amt===0?'—':fmtNum(amt)}</td>
     <td><input type="text" value="${esc(row.biko)}"
-      onchange="updateRowField(${catId},${ri},'biko',this.value)"></td>
+      onchange="updateRowField(${catId},${ri},'biko',this.value)"
+      onkeydown="if(event.key==='Enter'){event.preventDefault();enterFromBiko(${catId},${ri})}"></td>
     <td style="text-align:center">
       <button style="background:none;border:none;cursor:pointer;color:#ccc;font-size:13px;padding:3px" onclick="removeRow(${catId},${ri})">✕</button>
     </td>
@@ -697,6 +791,56 @@ function refreshAmountCell(catId, rowIdx){
   }
   const sub = document.getElementById(`subtotal-${catId}`);
   if(sub) sub.textContent = fmtNum(calcSubtotal(cat));
+}
+
+
+// ========== Enter キー操作 ==========
+function focusRowCell(catId, ri, colIdx){
+  const row = document.getElementById('row-'+catId+'-'+ri);
+  if(!row) return;
+  const inputs = row.querySelectorAll('input');
+  if(inputs[colIdx]) inputs[colIdx].focus();
+}
+
+function enterFromTanka(catId, ri){
+  const cat = categories.find(c=>c.id===catId);
+  if(!cat) return;
+  if(ri >= cat.rows.length - 1){
+    addRow(catId);
+  }
+  // 次の行の品名欄にフォーカス
+  setTimeout(function(){
+    focusRowCell(catId, ri+1, 0);
+  }, 80);
+}
+
+function enterAddRow(catId, ri){
+  const cat = categories.find(c=>c.id===catId);
+  if(!cat) return;
+  // 最後の行なら次の行を追加（再描画される）
+  if(ri >= cat.rows.length - 1){
+    addRow(catId);
+  }
+  // 再描画後に同じ行の数量欄にフォーカス
+  setTimeout(function(){
+    focusRowCell(catId, ri, 1);
+  }, 80);
+}
+
+function enterFromBiko(catId, ri){
+  const cat = categories.find(c=>c.id===catId);
+  if(!cat) return;
+  if(ri >= cat.rows.length - 1){
+    // 最後の行なら新規行を追加して品名欄にフォーカス
+    addRow(catId);
+    setTimeout(function(){
+      const newRow = document.getElementById('row-'+catId+'-'+(ri+1));
+      if(newRow) newRow.querySelectorAll('input')[0].focus();
+    }, 80);
+  } else {
+    // 次の行の品名欄へ
+    focusRowCell(catId, ri+1, 0);
+  }
 }
 
 // ========== カテゴリドロップダウン ==========
@@ -857,7 +1001,470 @@ function pickHinmeiNew(catId, ri, hinmei){
 function parseNum(v){ return parseFloat(String(v).replace(/,/g,''))||0; }
 function calcRowAmount(row){ return parseNum(row.qty)*parseNum(row.tanka); }
 function calcSubtotal(cat){ return cat.rows.reduce((s,r)=>s+calcRowAmount(r),0); }
-function calcGrandSubtotal(){ return categories.reduce((s,c)=>s+calcSubtotal(c),0); }
+
+
+// ========== マスターから選択モーダル ==========
+function openMasterSelectModal(){
+  // カテゴリフィルターを更新
+  const catFilter = document.getElementById('ms-cat-filter');
+  const cats = [...new Set(masterItems.map(m=>m.cat).filter(Boolean))].sort();
+  catFilter.innerHTML = '<option value="">全カテゴリ</option>' +
+    cats.map(c=>`<option value="${esc(c)}">${esc(c)}</option>`).join('');
+  document.getElementById('ms-search').value = '';
+  renderMasterSelectList();
+  document.getElementById('master-select-modal').classList.add('open');
+}
+
+function closeMasterSelectModal(){
+  document.getElementById('master-select-modal').classList.remove('open');
+}
+
+function renderMasterSelectList(){
+  const q = document.getElementById('ms-search').value.trim().toLowerCase();
+  const cat = document.getElementById('ms-cat-filter').value;
+  const filtered = masterItems.filter(m=>{
+    const matchQ = !q || m.hinmei.toLowerCase().includes(q) || (m.model||'').toLowerCase().includes(q);
+    const matchC = !cat || m.cat === cat;
+    return matchQ && matchC;
+  });
+
+  const list = document.getElementById('ms-list');
+  if(filtered.length === 0){
+    list.innerHTML = '<div style="padding:24px;text-align:center;color:#aaa;font-size:14px">該当する品目がありません</div>';
+    updateMsCount();
+    return;
+  }
+
+  list.innerHTML = filtered.map((m,i)=>{
+    const idx = masterItems.indexOf(m);
+    return `<label style="display:flex;align-items:center;gap:12px;padding:10px 14px;border-bottom:1px solid #e3f2fd;cursor:pointer;background:#fff"
+      onmouseover="this.style.background='#f0f7ff'" onmouseout="this.style.background='#fff'">
+      <input type="checkbox" class="ms-item-check" data-idx="${idx}"
+        style="width:18px;height:18px;cursor:pointer;flex-shrink:0"
+        onchange="updateMsCount()">
+      <div style="flex:1;min-width:0">
+        <div style="font-size:14px;font-weight:700;color:#222">${esc(m.hinmei)}${m.model?` <span style="font-size:12px;color:#888;font-weight:400">(${esc(m.model)})</span>`:''}</div>
+        <div style="font-size:12px;color:#5c7a9e;margin-top:2px">${esc(m.cat||'カテゴリなし')}</div>
+      </div>
+      <div style="text-align:right;flex-shrink:0">
+        <div style="font-size:14px;font-weight:700;color:#1565c0">¥${fmtNum(m.price)}</div>
+        <div style="font-size:12px;color:#888">/ ${esc(m.unit||'－')}</div>
+      </div>
+    </label>`;
+  }).join('');
+  updateMsCount();
+}
+
+function updateMsCount(){
+  const checked = document.querySelectorAll('.ms-item-check:checked').length;
+  const total = document.querySelectorAll('.ms-item-check').length;
+  document.getElementById('ms-selected-count').textContent = checked > 0 ? `${checked}件選択中` : '';
+  document.getElementById('ms-check-all').checked = checked > 0 && checked === total;
+  document.getElementById('ms-check-all').indeterminate = checked > 0 && checked < total;
+}
+
+function toggleAllMasterSelect(checked){
+  document.querySelectorAll('.ms-item-check').forEach(cb=>cb.checked=checked);
+  updateMsCount();
+}
+
+function addSelectedMasterItems(){
+  const checked = document.querySelectorAll('.ms-item-check:checked');
+  if(checked.length === 0){ showToast('品目を選択してください'); return; }
+  const sheet = sheets[currentSheetIdx];
+  if(!sheet) return;
+
+  // 最後の空行を削除してから追加
+  const lastRow = sheet.rows[sheet.rows.length - 1];
+  const hasEmptyLast = lastRow && lastRow.type==='item' && !lastRow.hinmei.trim();
+
+  checked.forEach(cb=>{
+    const m = masterItems[parseInt(cb.dataset.idx)];
+    if(!m) return;
+    const newRow = {
+      type: 'item',
+      hinmei: m.model ? m.hinmei+'（'+m.model+'）' : m.hinmei,
+      qty: '',
+      unit: m.unit||'',
+      tanka: m.price||'',
+      biko: ''
+    };
+    if(hasEmptyLast){
+      sheet.rows[sheet.rows.length - 1] = newRow;
+    } else {
+      sheet.rows.push(newRow);
+    }
+    // 以降は末尾追加
+    sheet.rows.push({type:'item',hinmei:'',qty:'',unit:'',tanka:'',biko:''});
+  });
+
+  // 末尾の空行は1つだけにする
+  while(sheet.rows.length > 1 &&
+    sheet.rows[sheet.rows.length-1].type==='item' && !sheet.rows[sheet.rows.length-1].hinmei &&
+    sheet.rows[sheet.rows.length-2].type==='item' && !sheet.rows[sheet.rows.length-2].hinmei){
+    sheet.rows.pop();
+  }
+
+  renderSheetContent();
+  updateTotal();
+  closeMasterSelectModal();
+  showToast(`${checked.length}件を追加しました`);
+}
+
+// ========== シート管理 ==========
+function addSheet(){
+  const id = ++sheetIdSeq;
+  const sheetNo = sheets.length + 2;
+  sheets.push({id, sheetNo, rows:[{type:'title',text:''},{type:'item',hinmei:'',qty:'',unit:'',tanka:'',biko:''}]});
+  currentSheetIdx = sheets.length - 1;
+  renderSheetTabs();
+  renderSheetContent();
+  updateTotal();
+}
+
+function removeSheet(idx){
+  if(sheets.length <= 1){showToast('最低1枚のシートが必要です');return;}
+  if(!confirm('No.'+sheets[idx].sheetNo+' を削除しますか？')) return;
+  sheets.splice(idx, 1);
+  sheets.forEach((s,i)=>s.sheetNo=i+2);
+  currentSheetIdx = Math.min(currentSheetIdx, sheets.length-1);
+  renderSheetTabs();
+  renderSheetContent();
+  updateTotal();
+}
+
+function switchSheet(idx){
+  currentSheetIdx = idx;
+  renderSheetTabs();
+  renderSheetContent();
+}
+
+function renderSheetTabs(){
+  const tabsEl = document.getElementById('sheet-tabs');
+  if(!tabsEl) return;
+  tabsEl.innerHTML = sheets.map((s,i)=>`
+    <button class="sheet-tab ${i===currentSheetIdx?'active':''}" onclick="switchSheet(${i})">
+      No.${s.sheetNo}
+      ${sheets.length>1?`<span class="tab-del" onclick="event.stopPropagation();removeSheet(${i})">✕</span>`:''}
+    </button>
+  `).join('') + '<button class="add-sheet-tab" onclick="addSheet()">＋</button>';
+}
+
+function renderSheetContent(){
+  const sheet = sheets[currentSheetIdx];
+  if(!sheet) return;
+  const headerLabel = document.getElementById('sheet-header-label');
+  if(headerLabel) headerLabel.textContent = 'No.' + sheet.sheetNo;
+  const itemCount = sheet.rows.filter(r=>r.type==='item'&&r.hinmei.trim()).length;
+  const counter = document.getElementById('row-counter');
+  if(counter){
+    counter.textContent = itemCount + ' / 25行';
+    counter.className = 'row-counter' + (itemCount>=25?' full':itemCount>=20?' warn':'');
+  }
+  const si = currentSheetIdx;
+  const tbody = sheet.rows.map((row,ri)=>{
+    if(row.type==='title'){
+      return `<tr class="title-row-tr" id="srow-${si}-${ri}">
+        <td colspan="6">
+          <div class="cat-input-wrap" style="position:relative">
+            <input type="text" value="${esc(row.text||'')}" placeholder="カテゴリ名を選択または入力..."
+              id="titleinput-${si}-${ri}"
+              style="width:100%;padding:5px 28px 5px 8px;font-size:13px;font-weight:600;color:#1565c0;background:#e3f2fd;border:1px solid #90caf9;border-radius:4px;text-align:center;outline:none"
+              onfocus="openTitleDD(${si},${ri})"
+              oninput="onTitleInput(${si},${ri},this.value)"
+              onblur="closeTitleDD(${si},${ri})"
+              onkeydown="if(event.key==='Enter'){event.preventDefault();focusNextRow(${si},${ri})}">
+            <span style="position:absolute;right:8px;top:50%;transform:translateY(-50%);color:#7bafd4;pointer-events:none;font-size:12px">▾</span>
+            <div class="cat-dropdown" id="titledd-${si}-${ri}"></div>
+          </div>
+        </td>
+        <td style="text-align:center">
+          <button style="background:none;border:none;cursor:pointer;color:#ccc;font-size:13px;padding:3px" onclick="removeSheetRow(${si},${ri})">✕</button>
+        </td>
+      </tr>`;
+    }
+    const amt = (parseFloat(String(row.qty||'').replace(/,/g,''))||0)*(parseFloat(String(row.tanka||'').replace(/,/g,''))||0);
+    return `<tr id="srow-${si}-${ri}">
+      <td><div class="hinmei-wrap">
+        <input type="text" value="${esc(row.hinmei||'')}" placeholder="品名を入力または検索..."
+          style="width:100%;padding:5px 7px;font-size:12px;border:1px solid #b8d0ea;border-radius:5px;background:#f5f9ff"
+          onfocus="openHinmeiDDSheet(${si},${ri})"
+          oninput="onHinmeiInputSheet(${si},${ri},this.value)"
+          onblur="closeHinmeiDDSheet(${si},${ri})"
+          onchange="updateSheetRow(${si},${ri},'hinmei',this.value)"
+          onkeydown="if(event.key==='Enter'){event.preventDefault();enterAddRowSheet(${si},${ri})}">
+        <div class="hinmei-dropdown" id="hdd-s-${si}-${ri}"></div>
+      </div></td>
+      <td class="r"><input type="text" value="${esc(row.qty||'')}" style="text-align:right;width:100%;padding:5px 7px;font-size:12px;border:1px solid #b8d0ea;border-radius:5px;background:#f5f9ff"
+        onchange="updateSheetRow(${si},${ri},'qty',this.value)"
+        oninput="updateSheetRow(${si},${ri},'qty',this.value)"
+        onkeydown="if(event.key==='Enter'){event.preventDefault();focusSheetCell(${si},${ri},2)}"></td>
+      <td><input type="text" value="${esc(row.unit||'')}" style="width:100%;padding:5px 7px;font-size:12px;border:1px solid #b8d0ea;border-radius:5px;background:#f5f9ff"
+        onchange="updateSheetRow(${si},${ri},'unit',this.value);syncMasterFromSheet(${si},${ri})"
+        onkeydown="if(event.key==='Enter'){event.preventDefault();focusSheetCell(${si},${ri},3)}"></td>
+      <td class="r"><input type="text" value="${esc(row.tanka||'')}" style="text-align:right;width:100%;padding:5px 7px;font-size:12px;border:1px solid #b8d0ea;border-radius:5px;background:#f5f9ff"
+        onchange="updateSheetRow(${si},${ri},'tanka',this.value);syncMasterFromSheet(${si},${ri})"
+        oninput="updateSheetRow(${si},${ri},'tanka',this.value)"
+        onkeydown="if(event.key==='Enter'){event.preventDefault();enterFromTankaSheet(${si},${ri})}"></td>
+      <td class="${amt===0?'amount-cell zero':'amount-cell'}" id="samt-${si}-${ri}">${amt===0?'—':fmtNum(amt)}</td>
+      <td><input type="text" value="${esc(row.biko||'')}" style="width:100%;padding:5px 7px;font-size:12px;border:1px solid #b8d0ea;border-radius:5px;background:#f5f9ff"
+        onchange="updateSheetRow(${si},${ri},'biko',this.value)"></td>
+      <td style="text-align:center">
+        <button style="background:none;border:none;cursor:pointer;color:#ccc;font-size:13px;padding:3px" onclick="removeSheetRow(${si},${ri})">✕</button>
+      </td>
+    </tr>`;
+  }).join('');
+
+  const subtotal = calcSheetSubtotal(si);
+  const content = document.getElementById('sheet-content');
+  if(!content) return;
+  content.innerHTML = `
+    <table class="detail-table" style="width:100%;border-collapse:collapse;font-size:12px">
+      <thead><tr>
+        <th style="width:34%;background:#1565c0;color:#ffffff;font-weight:700;padding:9px 6px;text-align:center;border-bottom:2px solid #0d47a1;font-size:14px">品名</th>
+        <th style="width:9%;background:#1565c0;color:#ffffff;font-weight:700;padding:9px 6px;text-align:center;border-bottom:2px solid #0d47a1;font-size:14px">数量</th>
+        <th style="width:8%;background:#1565c0;color:#ffffff;font-weight:700;padding:9px 6px;text-align:center;border-bottom:2px solid #0d47a1;font-size:14px">単位</th>
+        <th style="width:12%;background:#1565c0;color:#ffffff;font-weight:700;padding:9px 6px;text-align:center;border-bottom:2px solid #0d47a1;font-size:14px">単価</th>
+        <th style="width:12%;background:#1565c0;color:#ffffff;font-weight:700;padding:9px 6px;text-align:center;border-bottom:2px solid #0d47a1;font-size:14px">金額</th>
+        <th style="width:21%;background:#1565c0;color:#ffffff;font-weight:700;padding:9px 6px;text-align:center;border-bottom:2px solid #0d47a1;font-size:14px">備考</th>
+        <th style="width:4%;background:#ddeaf7;border-bottom:1px solid #c5d9f0"></th>
+      </tr></thead>
+      <tbody>${tbody}</tbody>
+      <tfoot><tr style="background:#eef4fb">
+        <td colspan="4" style="text-align:right;color:#5c7a9e;padding:6px 8px;font-size:12px">小計</td>
+        <td style="text-align:right;padding-right:8px;font-size:12px;font-weight:600;color:#1565c0">${fmtNum(subtotal)}</td>
+        <td colspan="2"></td>
+      </tr></tfoot>
+    </table>
+    <div class="sheet-action-bar">
+      <button class="btn-title" onclick="addTitleRowSheet()">＋ タイトル行追加</button>
+      <button class="btn-sm" onclick="addItemRowSheet()">＋ 行を追加</button>
+      <button class="btn-sm" style="background:#e8f5e9;color:#2e7d32;border-color:#66bb6a;font-weight:700" onclick="openMasterSelectModal()">📋 マスターから選択</button>
+    </div>`;
+}
+
+function updateSheetRow(si, ri, field, val){
+  if(sheets[si]&&sheets[si].rows[ri]) sheets[si].rows[ri][field]=val;
+  if(field==='qty'||field==='tanka'){
+    const row=sheets[si].rows[ri];
+    const amt=(parseFloat(String(row.qty||'').replace(/,/g,''))||0)*(parseFloat(String(row.tanka||'').replace(/,/g,''))||0);
+    const el=document.getElementById('samt-'+si+'-'+ri);
+    if(el){el.textContent=amt===0?'—':fmtNum(amt);el.className=amt===0?'amount-cell zero':'amount-cell';}
+    const itemCount=sheets[si].rows.filter(r=>r.type==='item'&&r.hinmei.trim()).length;
+    const counter=document.getElementById('row-counter');
+    if(counter){counter.textContent=itemCount+' / 25行';counter.className='row-counter'+(itemCount>=25?' full':itemCount>=20?' warn':'');}
+  }
+  updateTotal();
+}
+
+function addTitleRowSheet(){
+  const sheet=sheets[currentSheetIdx];
+  if(!sheet) return;
+  const lastIdx=sheet.rows.length-1;
+  sheet.rows.splice(lastIdx,0,{type:'title',text:''});
+  renderSheetContent();
+  setTimeout(()=>{
+    const r=document.getElementById('srow-'+currentSheetIdx+'-'+lastIdx);
+    if(r) r.querySelector('input')?.focus();
+  },50);
+}
+
+function addItemRowSheet(){
+  const sheet=sheets[currentSheetIdx];
+  if(!sheet) return;
+  sheet.rows.push({type:'item',hinmei:'',qty:'',unit:'',tanka:'',biko:''});
+  renderSheetContent();
+  updateTotal();
+}
+
+function removeSheetRow(si,ri){
+  if(!sheets[si]) return;
+  if(sheets[si].rows.length<=1){sheets[si].rows[0]={type:'item',hinmei:'',qty:'',unit:'',tanka:'',biko:''};}
+  else sheets[si].rows.splice(ri,1);
+  renderSheetContent();
+  updateTotal();
+}
+
+function enterAddRowSheet(si,ri){
+  const sheet=sheets[si];
+  if(!sheet) return;
+  if(ri>=sheet.rows.length-1){
+    sheet.rows.push({type:'item',hinmei:'',qty:'',unit:'',tanka:'',biko:''});
+    renderSheetContent();
+  }
+  setTimeout(()=>focusSheetCell(si,ri,1),80);
+}
+
+function enterFromTankaSheet(si,ri){
+  const sheet=sheets[si];
+  if(!sheet) return;
+  if(ri>=sheet.rows.length-1){
+    sheet.rows.push({type:'item',hinmei:'',qty:'',unit:'',tanka:'',biko:''});
+    renderSheetContent();
+  }
+  setTimeout(()=>focusSheetCell(si,ri+1,0),80);
+}
+
+function focusSheetCell(si,ri,colIdx){
+  const row=document.getElementById('srow-'+si+'-'+ri);
+  if(!row) return;
+  const inputs=row.querySelectorAll('input');
+  if(inputs[colIdx]) inputs[colIdx].focus();
+}
+
+function focusNextRow(si,ri){
+  const sheet=sheets[si];
+  if(!sheet) return;
+  if(ri<sheet.rows.length-1) focusSheetCell(si,ri+1,0);
+}
+
+function calcSheetSubtotal(si){
+  const sheet=sheets[si];
+  if(!sheet) return 0;
+  return sheet.rows.reduce((s,r)=>s+(r.type==='item'?(parseFloat(String(r.qty||'').replace(/,/g,''))||0)*(parseFloat(String(r.tanka||'').replace(/,/g,''))||0):0),0);
+}
+
+
+// ========== タイトル行カテゴリDD ==========
+function getCatNames(){
+  const fromMaster = [...new Set(masterItems.map(m=>m.cat).filter(Boolean))];
+  const fromSheets = [];
+  sheets.forEach(s=>s.rows.forEach(r=>{ if(r.type==='title'&&r.text) fromSheets.push(r.text); }));
+  return [...new Set([...fromSheets, ...fromMaster])];
+}
+
+function openTitleDD(si, ri){
+  const val = document.getElementById('titleinput-'+si+'-'+ri)?.value||'';
+  renderTitleDD(si, ri, val);
+  document.getElementById('titledd-'+si+'-'+ri)?.classList.add('open');
+}
+function closeTitleDD(si, ri){
+  setTimeout(()=>{
+    document.getElementById('titledd-'+si+'-'+ri)?.classList.remove('open');
+    const inp = document.getElementById('titleinput-'+si+'-'+ri);
+    if(inp) updateSheetRow(si, ri, 'text', inp.value);
+  }, 200);
+}
+function onTitleInput(si, ri, val){
+  updateSheetRow(si, ri, 'text', val);
+  renderTitleDD(si, ri, val);
+}
+function renderTitleDD(si, ri, query){
+  const dd = document.getElementById('titledd-'+si+'-'+ri);
+  if(!dd) return;
+  const cats = getCatNames();
+  const q = query.trim().toLowerCase();
+  const filtered = q ? cats.filter(c=>c.toLowerCase().includes(q)) : cats;
+  const exactMatch = cats.some(c=>c===query.trim());
+  let h = filtered.map(c=>`
+    <div class="dd-item ${c===query?'active':''}" onmousedown="pickTitleCat(${si},${ri},'${esc(c)}')">${esc(c)}</div>
+  `).join('');
+  if(query.trim()&&!exactMatch){
+    h += `<div class="dd-item new-item" onmousedown="pickTitleCat(${si},${ri},'${esc(query.trim())}')">＋「${esc(query.trim())}」を新規追加</div>`;
+  }
+  if(!h) h = '<div class="dd-item" style="color:#aaa;cursor:default">候補なし</div>';
+  dd.innerHTML = h;
+}
+function pickTitleCat(si, ri, name){
+  const inp = document.getElementById('titleinput-'+si+'-'+ri);
+  if(inp) inp.value = name;
+  updateSheetRow(si, ri, 'text', name);
+  setTimeout(()=>document.getElementById('titledd-'+si+'-'+ri)?.classList.remove('open'), 50);
+}
+
+
+function getCurrentCatName(si, ri){
+  // ri より前の直近タイトル行のテキストを返す
+  const sheet = sheets[si];
+  if(!sheet) return '';
+  for(let i = ri; i >= 0; i--){
+    if(sheet.rows[i] && sheet.rows[i].type === 'title'){
+      return sheet.rows[i].text || '';
+    }
+  }
+  return '';
+}
+
+function openHinmeiDDSheet(si,ri){
+  const sheet=sheets[si];
+  if(!sheet||!sheet.rows[ri]) return;
+  renderHinmeiDDSheet(si,ri,sheet.rows[ri].hinmei||'');
+  document.getElementById('hdd-s-'+si+'-'+ri)?.classList.add('open');
+}
+function closeHinmeiDDSheet(si,ri){
+  setTimeout(()=>document.getElementById('hdd-s-'+si+'-'+ri)?.classList.remove('open'),200);
+}
+function onHinmeiInputSheet(si,ri,val){
+  if(sheets[si]&&sheets[si].rows[ri]) sheets[si].rows[ri].hinmei=val;
+  renderHinmeiDDSheet(si,ri,val);
+}
+function renderHinmeiDDSheet(si,ri,query){
+  const dd=document.getElementById('hdd-s-'+si+'-'+ri);
+  if(!dd) return;
+  const q=query.trim().toLowerCase();
+  const filtered=q?masterItems.filter(m=>m.hinmei.toLowerCase().includes(q)||(m.model||'').toLowerCase().includes(q)):masterItems.slice(0,8);
+  const exactMatch=masterItems.some(m=>m.hinmei===query.trim());
+  const hilite=str=>{if(!q)return esc(str);const safe=q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');return esc(str).replace(new RegExp(safe,'gi'),m=>'<span class="highlight">'+m+'</span>');};
+  let h=filtered.map(m=>`<div class="hd-item" onmousedown="pickHinmeiSheet(${si},${ri},'${esc(m.hinmei)}','${esc(m.model||'')}','${esc(m.unit)}',${m.price})">
+    <div><div class="hd-name">${hilite(m.hinmei)}${m.model?` <span style="color:#888;font-size:11px">(${esc(m.model)})</span>`:''}</div>
+    <div class="hd-meta">${esc(m.cat||'')}${m.model?' ・ '+esc(m.model):''}</div></div>
+    <div class="hd-price">¥${fmtNum(m.price)} / ${esc(m.unit)}</div>
+  </div>`).join('');
+  if(query.trim()&&!exactMatch) h+=`<div class="hd-item hd-new" onmousedown="pickHinmeiNewSheet(${si},${ri},'${esc(query.trim())}')">＋「${esc(query.trim())}」を新規登録</div>`;
+  if(!h) h='<div class="hd-item" style="color:#aaa;cursor:default">候補なし</div>';
+  dd.innerHTML=h;
+  dd.classList.add('open');
+}
+function pickHinmeiSheet(si,ri,hinmei,model,unit,price){
+  if(!sheets[si]||!sheets[si].rows[ri]) return;
+  sheets[si].rows[ri].hinmei=model?hinmei+'（'+model+'）':hinmei;
+  sheets[si].rows[ri].unit=unit;
+  sheets[si].rows[ri].tanka=price;
+  // 最後の行なら次の行を自動追加
+  if(ri>=sheets[si].rows.length-1){
+    sheets[si].rows.push({type:'item',hinmei:'',qty:'',unit:'',tanka:'',biko:''});
+  }
+  renderSheetContent();
+  updateTotal();
+  // 数量欄にフォーカス
+  setTimeout(()=>focusSheetCell(si,ri,1),80);
+}
+function pickHinmeiNewSheet(si,ri,hinmei){
+  if(!sheets[si]||!sheets[si].rows[ri]) return;
+  sheets[si].rows[ri].hinmei=hinmei;
+  if(!masterItems.some(m=>m.hinmei===hinmei)){
+    const cat = getCurrentCatName(si, ri);
+    masterItems.push({hinmei,model:'',unit:'',price:0,cat});
+    saveMaster();
+    showToast('「'+hinmei+'」をマスターに自動登録しました');
+  }
+  renderSheetContent();
+  updateTotal();
+}
+function syncMasterFromSheet(si,ri){
+  const row=sheets[si]?.rows[ri];
+  if(!row) return;
+  const baseName=(row.hinmei||'').replace(/（.*）$/,'').trim();
+  if(!baseName) return;
+  const unit=row.unit||'';
+  const price=parseFloat(String(row.tanka||'').replace(/,/g,''))||0;
+  const idx=masterItems.findIndex(m=>m.hinmei===baseName||m.hinmei===row.hinmei);
+  if(idx>=0){
+    let changed=false;
+    if(unit&&masterItems[idx].unit!==unit){masterItems[idx].unit=unit;changed=true;}
+    if(price&&masterItems[idx].price!==price){masterItems[idx].price=price;changed=true;}
+    if(changed){saveMaster();showToast('「'+baseName+'」のマスターを更新しました');}
+  } else if(baseName){
+    const cat = getCurrentCatName(si, ri);
+    masterItems.push({hinmei:baseName,model:'',unit,price,cat});
+    saveMaster();
+    showToast('「'+baseName+'」をマスターに登録しました');
+  }
+}
+
+function calcGrandSubtotal(){
+  return sheets.reduce((s,_,i)=>s+calcSheetSubtotal(i), 0);
+}
 
 function updateTotal(){
   const sub = calcGrandSubtotal();
@@ -878,6 +1485,9 @@ function updateTotal(){
 
 // ========== 履歴 ==========
 function generateEstimateNo(){
+  // 手入力されていればそれを使う
+  const inputVal = document.getElementById('estimate-no-input')?.value?.trim();
+  if(inputVal) return inputVal;
   const d=new Date();
   const base=`${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}`;
   const same=estimates.filter(e=>e.no&&e.no.startsWith(base));
@@ -885,9 +1495,10 @@ function generateEstimateNo(){
 }
 
 async function saveEstimate(){
-  const no = currentEstimateId
+  const inputNo = document.getElementById('estimate-no-input')?.value?.trim();
+  const no = inputNo || (currentEstimateId
     ? estimates.find(e=>e.id===currentEstimateId)?.no
-    : generateEstimateNo();
+    : generateEstimateNo());
   const data = {
     id: currentEstimateId || Date.now(),
     no: no || generateEstimateNo(),
@@ -900,7 +1511,7 @@ async function saveEstimate(){
     expiry: document.getElementById('f-expiry').value,
     note: document.getElementById('f-note').value,
     taxRate: document.getElementById('tax-rate').value,
-    categories: JSON.parse(JSON.stringify(categories)),
+    sheets: JSON.parse(JSON.stringify(sheets)),
     total: calcGrandSubtotal(),
     savedAt: new Date().toLocaleDateString('ja-JP'),
     status: 'saved'
@@ -918,7 +1529,7 @@ async function saveEstimate(){
       await window.fbSetDoc(window.fbDoc(window.fbDb,'appdata','estimates'), {list: estimates});
     } catch(e){ console.error('履歴保存エラー:', e); }
   }
-  document.getElementById('estimate-no-display').textContent='見積番号：'+data.no;
+  document.getElementById('estimate-no-input').value = data.no;
   showToast('保存しました');
 }
 
@@ -926,6 +1537,7 @@ function loadEstimate(id){
   const e=estimates.find(e=>e.id===id);
   if(!e) return;
   currentEstimateId=e.id;
+  document.getElementById('f-date').value=e.date||'';
   document.getElementById('f-client').value=e.client||'';
   document.getElementById('f-title').value=e.title||'';
   document.getElementById('f-koki-from').value=e.kokiFrom||'';
@@ -935,11 +1547,14 @@ function loadEstimate(id){
   document.getElementById('f-expiry').value=e.expiry||'発行日より30日間';
   document.getElementById('f-note').value=e.note||'';
   document.getElementById('tax-rate').value=e.taxRate||'10';
-  categories=JSON.parse(JSON.stringify(e.categories||[]));
-  catIdSeq=categories.reduce((m,c)=>Math.max(m,c.id),0);
-  renderCategories();
+  sheets = JSON.parse(JSON.stringify(e.sheets||[]));
+  if(sheets.length===0) addSheet();
+  sheetIdSeq = sheets.length;
+  currentSheetIdx = 0;
+  renderSheetTabs();
+  renderSheetContent();
   updateTotal();
-  document.getElementById('estimate-no-display').textContent='見積番号：'+e.no;
+  document.getElementById('estimate-no-input').value = e.no;
   closeHistModal();
   showToast('読み込みました：'+e.no);
 }
@@ -1205,7 +1820,8 @@ function closeMasterModal(){
 
 // ========== Excel出力（クリップボードコピー方式） ==========
 async function exportExcel(){
-  if(categories.length===0){showToast('明細が空です');return;}
+  const hasData = sheets.some(s=>s.rows.some(r=>r.type==='item'&&r.hinmei.trim()));
+  if(!hasData){showToast('明細が空です');return;}
 
   const no = currentEstimateId
     ? (estimates.find(e=>e.id===currentEstimateId)?.no || generateEstimateNo())
@@ -1238,16 +1854,18 @@ async function exportExcel(){
     subtotal:  sub,
     tax_amount: tax,
     grand_total: sub + tax,
-    categories: categories.map(c=>({
-      name: c.name,
-      rows: c.rows.filter(r=>r.hinmei.trim()).map(r=>({
-        hinmei: r.hinmei,
+    sheets: sheets.map((s,si)=>({
+      sheetNo: s.sheetNo,
+      rows: s.rows.map(r=>({
+        type:   r.type||'item',
+        text:   r.text||'',
+        hinmei: r.hinmei||'',
         qty:    parseFloat(r.qty)||0,
-        unit:   r.unit,
-        tanka:  parseFloat(String(r.tanka).replace(/,/g,''))||0,
+        unit:   r.unit||'',
+        tanka:  parseFloat(String(r.tanka||'').replace(/,/g,''))||0,
         biko:   r.biko||''
       }))
-    })).filter(c=>c.rows.length>0)
+    }))
   };
 
   const jsonStr = JSON.stringify(data);
@@ -1299,8 +1917,9 @@ function buildPreviewHTML(){
   const sub     = calcGrandSubtotal();
   const tax     = Math.round(sub * taxRate / 100);
   const grand   = sub + tax;
-  const no      = document.getElementById('estimate-no-display').textContent.replace('見積番号：','') || '自動採番';
-  const today   = new Date().toLocaleDateString('ja-JP',{year:'numeric',month:'long',day:'numeric'});
+  const no      = document.getElementById('estimate-no-input')?.value || '自動採番';
+  const dateVal = document.getElementById('f-date')?.value;
+  const today   = dateVal ? new Date(dateVal).toLocaleDateString('ja-JP',{year:'numeric',month:'long',day:'numeric'}) : new Date().toLocaleDateString('ja-JP',{year:'numeric',month:'long',day:'numeric'});
 
   const sheet1 = `
   <div style="background:#fff;border-radius:8px;padding:0;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.1)">
@@ -1342,12 +1961,16 @@ function buildPreviewHTML(){
     </div>
   </div>`;
 
-  const validCats = categories.filter(c=>c.rows.some(r=>r.hinmei.trim()));
-  const sheets = validCats.map((cat, ci) => {
-    const rows = cat.rows.filter(r=>r.hinmei.trim());
-    const catSub = rows.reduce((s,r)=>s+parseNum(r.qty)*parseNum(r.tanka),0);
-    const rowsHTML = rows.map(r=>{
-      const kg = parseNum(r.qty)*parseNum(r.tanka);
+  const sheetPreviews = sheets.map((sheet, si) => {
+    const sheetSub = calcSheetSubtotal(si);
+    const rowsHTML = sheet.rows.map(r=>{
+      if(r.type==='title'){
+        return `<tr style="background:#ddeaf7">
+          <td colspan="6" style="border:2px solid #1565c0;padding:6px 10px;text-align:center;font-weight:600;color:#1565c0;font-size:13px">${esc(r.text||'')}</td>
+        </tr>`;
+      }
+      const kg = (parseNum(r.qty)||0)*(parseNum(r.tanka)||0);
+      if(!r.hinmei) return '';
       return `<tr>
         <td style="border:1px solid #ccc;padding:4px 8px">${esc(r.hinmei)}</td>
         <td style="border:1px solid #ccc;padding:4px 8px;text-align:right">${r.qty}</td>
@@ -1359,25 +1982,24 @@ function buildPreviewHTML(){
     }).join('');
     return `
     <div style="background:#fff;border-radius:8px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.1)">
-      <div style="background:#1976d2;color:#fff;padding:8px 16px;font-size:12px;font-weight:600">No.${ci+2} ― 明細書（${esc(cat.name)}）</div>
+      <div style="background:#1976d2;color:#fff;padding:8px 16px;font-size:12px;font-weight:600">No.${sheet.sheetNo} ― 明細書</div>
       <div style="padding:16px 20px;font-family:'ＭＳ Ｐゴシック','MS PGothic',sans-serif">
-        <div style="font-size:13px;font-weight:bold;border-bottom:2px solid #1565c0;padding-bottom:6px;margin-bottom:12px;color:#1565c0">▶ ${esc(cat.name)}</div>
         <table style="width:100%;border-collapse:collapse;font-size:12px">
           <thead>
             <tr style="background:#ddeaf7">
-              <th style="border:1px solid #c5d9f0;padding:5px 8px;text-align:left;width:35%">品名</th>
-              <th style="border:1px solid #c5d9f0;padding:5px 8px;text-align:right;width:9%">数量</th>
-              <th style="border:1px solid #c5d9f0;padding:5px 8px;text-align:center;width:8%">単位</th>
-              <th style="border:1px solid #c5d9f0;padding:5px 8px;text-align:right;width:13%">単価</th>
-              <th style="border:1px solid #c5d9f0;padding:5px 8px;text-align:right;width:13%">金額</th>
-              <th style="border:1px solid #c5d9f0;padding:5px 8px;text-align:left">備考</th>
+              <th style="border:2px solid #1565c0;padding:5px 8px;text-align:left;width:35%">品名</th>
+              <th style="border:2px solid #1565c0;padding:5px 8px;text-align:right;width:9%">数量</th>
+              <th style="border:2px solid #1565c0;padding:5px 8px;text-align:center;width:8%">単位</th>
+              <th style="border:2px solid #1565c0;padding:5px 8px;text-align:right;width:13%">単価</th>
+              <th style="border:2px solid #1565c0;padding:5px 8px;text-align:right;width:13%">金額</th>
+              <th style="border:2px solid #1565c0;padding:5px 8px;text-align:left">備考</th>
             </tr>
           </thead>
           <tbody>${rowsHTML}</tbody>
           <tfoot>
             <tr style="background:#f0f7ff">
-              <td colspan="4" style="border:1px solid #c5d9f0;padding:6px 8px;text-align:right;font-weight:600;color:#555">小計</td>
-              <td style="border:1px solid #c5d9f0;padding:6px 8px;text-align:right;font-weight:700;color:#1565c0">¥${fmtNum(catSub)}</td>
+              <td colspan="4" style="border:2px solid #1565c0;padding:6px 8px;text-align:right;font-weight:600;color:#555">小計</td>
+              <td style="border:2px solid #1565c0;padding:6px 8px;text-align:right;font-weight:700;color:#1565c0">¥${fmtNum(sheetSub)}</td>
               <td style="border:1px solid #c5d9f0"></td>
             </tr>
           </tfoot>
@@ -1402,7 +2024,7 @@ function buildPreviewHTML(){
     </div>
   </div>`;
 
-  return sheet1 + (validCats.length > 0 ? sheets + summary : '');
+  return sheet1 + (sheetPreviews ? sheetPreviews + summary : '');
 }
 
 function fmtDate(d){
@@ -1442,24 +2064,29 @@ function clearForm(){
   document.getElementById('f-payment').value='金融機関の口座振込';
   document.getElementById('f-expiry').value='発行日より30日間';
   document.getElementById('tax-rate').value='10';
-  categories=[];
-  catIdSeq=0;
+  sheets=[];
+  sheetIdSeq=0;
+  currentSheetIdx=0;
   currentEstimateId=null;
-  renderCategories();
+  addSheet();
   updateTotal();
-  document.getElementById('estimate-no-display').textContent='見積番号：自動採番';
+  const nextNo = generateEstimateNo();
+  document.getElementById('estimate-no-input').value = nextNo;
+  document.getElementById('f-date').value = new Date().toISOString().slice(0,10);
 }
 
 
 
 // ========== 自動保存（Excel出力時） ==========
 async function autoSaveEstimate(status='exported'){
-  const no = currentEstimateId
+  const inputNo = document.getElementById('estimate-no-input')?.value?.trim();
+  const no = inputNo || (currentEstimateId
     ? estimates.find(e=>e.id===currentEstimateId)?.no
-    : generateEstimateNo();
+    : generateEstimateNo());
   const data = {
     id: currentEstimateId || Date.now(),
     no: no || generateEstimateNo(),
+    date:      document.getElementById('f-date').value,
     client:    document.getElementById('f-client').value,
     title:     document.getElementById('f-title').value,
     kokiFrom:  document.getElementById('f-koki-from').value,
@@ -1469,7 +2096,7 @@ async function autoSaveEstimate(status='exported'){
     expiry:    document.getElementById('f-expiry').value,
     note:      document.getElementById('f-note').value,
     taxRate:   document.getElementById('tax-rate').value,
-    categories: JSON.parse(JSON.stringify(categories)),
+    sheets: JSON.parse(JSON.stringify(sheets)),
     total:     calcGrandSubtotal(),
     savedAt:   new Date().toLocaleDateString('ja-JP'),
     status
@@ -1488,7 +2115,7 @@ async function autoSaveEstimate(status='exported'){
       await window.fbSetDoc(window.fbDoc(window.fbDb,'appdata','estimates'), {list: estimates});
     } catch(e){ console.error('自動保存エラー:', e); }
   }
-  document.getElementById('estimate-no-display').textContent = '見積番号：' + data.no;
+  document.getElementById('estimate-no-input').value = data.no;
 }
 
 // ========== バックアップ・復元 ==========
