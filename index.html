@@ -561,6 +561,7 @@ let sheetIdSeq = 0;
 let catIdSeq = 0;
 let currentEstimateId = null;
 let currentEstimateNo = '';
+let usageCount = JSON.parse(localStorage.getItem('mitumori_usage') || '{}');
 let currentUser = null;
 
 const DEFAULT_MASTER = [
@@ -632,6 +633,12 @@ async function loadFromFirebase(){
       estimates = histDoc.data().list || [];
     } else {
       estimates = [];
+    }
+    // 使用頻度読み込み
+    const usageDoc = await window.fbGetDoc(window.fbDoc(window.fbDb, 'appdata', 'usage'));
+    if(usageDoc.exists()){
+      usageCount = usageDoc.data().counts || {};
+      localStorage.setItem('mitumori_usage', JSON.stringify(usageCount));
     }
     showToast('データを読み込みました');
     // 次の見積番号を自動セット
@@ -1111,6 +1118,33 @@ function addSelectedMasterItems(){
   showToast(`${checked.length}件を追加しました`);
 }
 
+
+// ========== 使用頻度管理 ==========
+function recordUsage(hinmei){
+  const base = hinmei.replace(/（.*）$/, '').trim();
+  if(!base) return;
+  usageCount[base] = (usageCount[base] || 0) + 1;
+  localStorage.setItem('mitumori_usage', JSON.stringify(usageCount));
+  // Firebaseにも保存
+  if(window.fbDb && currentUser){
+    window.fbSetDoc(window.fbDoc(window.fbDb,'appdata','usage'), {counts: usageCount})
+      .catch(e=>console.error('使用頻度保存エラー:', e));
+  }
+}
+
+function getSortedMasterItems(query){
+  const q = (query||'').trim().toLowerCase();
+  const filtered = q
+    ? masterItems.filter(m=>m.hinmei.toLowerCase().includes(q)||(m.model||'').toLowerCase().includes(q))
+    : masterItems.slice(0, 20);
+  // 使用頻度順にソート
+  return filtered.slice().sort((a, b)=>{
+    const ca = usageCount[a.hinmei] || 0;
+    const cb = usageCount[b.hinmei] || 0;
+    return cb - ca;
+  });
+}
+
 // ========== シート管理 ==========
 function addSheet(){
   const id = ++sheetIdSeq;
@@ -1402,14 +1436,17 @@ function renderHinmeiDDSheet(si,ri,query){
   const dd=document.getElementById('hdd-s-'+si+'-'+ri);
   if(!dd) return;
   const q=query.trim().toLowerCase();
-  const filtered=q?masterItems.filter(m=>m.hinmei.toLowerCase().includes(q)||(m.model||'').toLowerCase().includes(q)):masterItems.slice(0,8);
+  const filtered=getSortedMasterItems(q||'').slice(0,10);
   const exactMatch=masterItems.some(m=>m.hinmei===query.trim());
   const hilite=str=>{if(!q)return esc(str);const safe=q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');return esc(str).replace(new RegExp(safe,'gi'),m=>'<span class="highlight">'+m+'</span>');};
-  let h=filtered.map(m=>`<div class="hd-item" onmousedown="pickHinmeiSheet(${si},${ri},'${esc(m.hinmei)}','${esc(m.model||'')}','${esc(m.unit)}',${m.price})">
-    <div><div class="hd-name">${hilite(m.hinmei)}${m.model?` <span style="color:#888;font-size:11px">(${esc(m.model)})</span>`:''}</div>
+  let h=filtered.map(m=>{
+    const cnt = usageCount[m.hinmei]||0;
+    const badge = cnt>=3 ? `<span style="font-size:10px;background:#e8f5e9;color:#2e7d32;border-radius:4px;padding:1px 5px;margin-left:4px">★${cnt}回</span>` : '';
+    return `<div class="hd-item" onmousedown="pickHinmeiSheet(${si},${ri},'${esc(m.hinmei)}','${esc(m.model||'')}','${esc(m.unit)}',${m.price})">
+    <div><div class="hd-name">${hilite(m.hinmei)}${m.model?` <span style="color:#888;font-size:11px">(${esc(m.model)})</span>`:''}${badge}</div>
     <div class="hd-meta">${esc(m.cat||'')}${m.model?' ・ '+esc(m.model):''}</div></div>
     <div class="hd-price">¥${fmtNum(m.price)} / ${esc(m.unit)}</div>
-  </div>`).join('');
+  </div>`;}).join('');
   if(query.trim()&&!exactMatch) h+=`<div class="hd-item hd-new" onmousedown="pickHinmeiNewSheet(${si},${ri},'${esc(query.trim())}')">＋「${esc(query.trim())}」を新規登録</div>`;
   if(!h) h='<div class="hd-item" style="color:#aaa;cursor:default">候補なし</div>';
   dd.innerHTML=h;
@@ -1420,6 +1457,7 @@ function pickHinmeiSheet(si,ri,hinmei,model,unit,price){
   sheets[si].rows[ri].hinmei=model?hinmei+'（'+model+'）':hinmei;
   sheets[si].rows[ri].unit=unit;
   sheets[si].rows[ri].tanka=price;
+  recordUsage(hinmei);
   // 最後の行なら次の行を自動追加
   if(ri>=sheets[si].rows.length-1){
     sheets[si].rows.push({type:'item',hinmei:'',qty:'',unit:'',tanka:'',biko:''});
@@ -1502,6 +1540,7 @@ async function saveEstimate(){
   const data = {
     id: currentEstimateId || Date.now(),
     no: no || generateEstimateNo(),
+    date: document.getElementById('f-date').value,
     client: document.getElementById('f-client').value,
     title: document.getElementById('f-title').value,
     kokiFrom: document.getElementById('f-koki-from').value,
