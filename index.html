@@ -1228,7 +1228,7 @@ function renderSheetContent(){
   const tbody = sheet.rows.map((row,ri)=>{
     if(row.type==='title'){
       return `<tr class="title-row-tr" id="srow-${si}-${ri}">
-        <td colspan="6">
+        <td colspan="4">
           <div class="cat-input-wrap" style="position:relative">
             <input type="text" value="${esc(row.text||'')}" placeholder="カテゴリ名を選択または入力..."
               id="titleinput-${si}-${ri}"
@@ -1241,12 +1241,23 @@ function renderSheetContent(){
             <div class="cat-dropdown" id="titledd-${si}-${ri}"></div>
           </div>
         </td>
-        <td style="text-align:center">
+        <td colspan="2" style="background:#e3f2fd;padding:3px 6px">
+          <div style="display:flex;align-items:center;gap:4px;justify-content:center">
+            <span style="font-size:11px;color:#1565c0;font-weight:600;white-space:nowrap">掛け率</span>
+            <input type="number" value="${Math.round((row.rate||1)*100)}" min="1" step="1"
+              style="width:64px;padding:4px 6px;font-size:12px;font-weight:600;color:#0d47a1;background:#fff;border:1px solid #90caf9;border-radius:4px;text-align:center"
+              onchange="updateSheetRowRate(${si},${ri},(parseFloat(this.value)||100)/100)"
+              oninput="updateSheetRowRate(${si},${ri},(parseFloat(this.value)||100)/100)">
+            <span style="font-size:11px;color:#1565c0;font-weight:600">%</span>
+          </div>
+        </td>
+        <td style="text-align:center;background:#e3f2fd">
           <button style="background:none;border:none;cursor:pointer;color:#ccc;font-size:13px;padding:3px" onclick="removeSheetRow(${si},${ri})">✕</button>
         </td>
       </tr>`;
     }
-    const amt = (parseFloat(String(row.qty||'').replace(/,/g,''))||0)*(parseFloat(String(row.tanka||'').replace(/,/g,''))||0);
+    const rate = getCurrentRate(si, ri);
+    const amt = Math.round((parseFloat(String(row.qty||'').replace(/,/g,''))||0)*(parseFloat(String(row.tanka||'').replace(/,/g,''))||0)*rate);
     return `<tr id="srow-${si}-${ri}">
       <td><div class="hinmei-wrap">
         <input type="text" value="${esc(row.hinmei||'')}" placeholder="品名を入力または検索..."
@@ -1310,7 +1321,8 @@ function updateSheetRow(si, ri, field, val){
   if(sheets[si]&&sheets[si].rows[ri]) sheets[si].rows[ri][field]=val;
   if(field==='qty'||field==='tanka'){
     const row=sheets[si].rows[ri];
-    const amt=(parseFloat(String(row.qty||'').replace(/,/g,''))||0)*(parseFloat(String(row.tanka||'').replace(/,/g,''))||0);
+    const rate=getCurrentRate(si,ri);
+    const amt=Math.round((parseFloat(String(row.qty||'').replace(/,/g,''))||0)*(parseFloat(String(row.tanka||'').replace(/,/g,''))||0)*rate);
     const el=document.getElementById('samt-'+si+'-'+ri);
     if(el){el.textContent=amt===0?'—':fmtNum(amt);el.className=amt===0?'amount-cell zero':'amount-cell';}
     const itemCount=sheets[si].rows.filter(r=>r.type==='item'&&r.hinmei.trim()).length;
@@ -1384,9 +1396,34 @@ function focusNextRow(si,ri){
 function calcSheetSubtotal(si){
   const sheet=sheets[si];
   if(!sheet) return 0;
-  return sheet.rows.reduce((s,r)=>s+(r.type==='item'?(parseFloat(String(r.qty||'').replace(/,/g,''))||0)*(parseFloat(String(r.tanka||'').replace(/,/g,''))||0):0),0);
+  let currentRate = 1;
+  return sheet.rows.reduce((s,r,ri)=>{
+    if(r.type==='title'){ currentRate = parseFloat(r.rate)||1; return s; }
+    const amt = Math.round((parseFloat(String(r.qty||'').replace(/,/g,''))||0)*(parseFloat(String(r.tanka||'').replace(/,/g,''))||0)*currentRate);
+    return s + (r.type==='item' ? amt : 0);
+  },0);
 }
 
+
+
+// ========== 掛け率 ==========
+function getCurrentRate(si, ri){
+  const sheet = sheets[si];
+  if(!sheet) return 1;
+  for(let i = ri; i >= 0; i--){
+    if(sheet.rows[i] && sheet.rows[i].type === 'title'){
+      return parseFloat(sheet.rows[i].rate) || 1;
+    }
+  }
+  return 1;
+}
+
+function updateSheetRowRate(si, ri, rate){
+  if(sheets[si] && sheets[si].rows[ri]) sheets[si].rows[ri].rate = rate;
+  // 同タイトル行配下の金額を再計算
+  renderSheetContent();
+  updateTotal();
+}
 
 // ========== タイトル行カテゴリDD ==========
 function getCatNames(){
@@ -1976,6 +2013,7 @@ async function exportExcel(){
       rows: s.rows.map(r=>({
         type:   r.type||'item',
         text:   r.text||'',
+        rate:   parseFloat(r.rate)||1,
         hinmei: r.hinmei||'',
         qty:    parseFloat(r.qty)||0,
         unit:   r.unit||'',
