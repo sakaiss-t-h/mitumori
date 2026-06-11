@@ -1204,7 +1204,7 @@ function closeMasterModal(){
 }
 
 // ========== Excel出力（クリップボードコピー方式） ==========
-function exportExcel(){
+async function exportExcel(){
   if(categories.length===0){showToast('明細が空です');return;}
 
   const no = currentEstimateId
@@ -1255,11 +1255,8 @@ function exportExcel(){
   document.getElementById('copy-ok').style.display = 'none';
   document.getElementById('json-modal').classList.add('open');
 
-  // 履歴を出力済みに更新
-  if(currentEstimateId){
-    const idx=estimates.findIndex(e=>e.id===currentEstimateId);
-    if(idx>=0){estimates[idx].status='exported'; localStorage.setItem('mitumori_estimates',JSON.stringify(estimates));}
-  }
+  // Excel出力時に自動で履歴保存
+  await autoSaveEstimate('exported');
 }
 
 function copyJson(){
@@ -1453,6 +1450,46 @@ function clearForm(){
   document.getElementById('estimate-no-display').textContent='見積番号：自動採番';
 }
 
+
+
+// ========== 自動保存（Excel出力時） ==========
+async function autoSaveEstimate(status='exported'){
+  const no = currentEstimateId
+    ? estimates.find(e=>e.id===currentEstimateId)?.no
+    : generateEstimateNo();
+  const data = {
+    id: currentEstimateId || Date.now(),
+    no: no || generateEstimateNo(),
+    client:    document.getElementById('f-client').value,
+    title:     document.getElementById('f-title').value,
+    kokiFrom:  document.getElementById('f-koki-from').value,
+    kokiTo:    document.getElementById('f-koki-to').value,
+    place:     document.getElementById('f-place').value,
+    payment:   document.getElementById('f-payment').value,
+    expiry:    document.getElementById('f-expiry').value,
+    note:      document.getElementById('f-note').value,
+    taxRate:   document.getElementById('tax-rate').value,
+    categories: JSON.parse(JSON.stringify(categories)),
+    total:     calcGrandSubtotal(),
+    savedAt:   new Date().toLocaleDateString('ja-JP'),
+    status
+  };
+  if(currentEstimateId){
+    const idx = estimates.findIndex(e=>e.id===currentEstimateId);
+    if(idx>=0) estimates[idx] = data;
+    else estimates.unshift(data);
+  } else {
+    estimates.unshift(data);
+    currentEstimateId = data.id;
+  }
+  localStorage.setItem('mitumori_estimates', JSON.stringify(estimates));
+  if(window.fbDb && currentUser){
+    try {
+      await window.fbSetDoc(window.fbDoc(window.fbDb,'appdata','estimates'), {list: estimates});
+    } catch(e){ console.error('自動保存エラー:', e); }
+  }
+  document.getElementById('estimate-no-display').textContent = '見積番号：' + data.no;
+}
 
 // ========== バックアップ・復元 ==========
 function openBackupModal(){
