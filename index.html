@@ -457,6 +457,22 @@ window.fbDeleteDoc = deleteDoc;
         <div class="form-group"><label class="form-label">カテゴリ</label><input class="form-input" id="m-cat" type="text" placeholder="材料費"></div>
       </div>
       <button class="btn btn-success btn-sm" onclick="addMasterItem()">＋ 登録</button>
+      <div style="display:flex;gap:8px;margin-top:14px;margin-bottom:8px;flex-wrap:wrap;align-items:center">
+        <select id="master-sort" onchange="renderMasterTable()"
+          style="padding:6px 10px;font-size:13px;border:1px solid #b8d0ea;border-radius:6px;background:#fff;cursor:pointer">
+          <option value="freq">使用頻度順</option>
+          <option value="kana">五十音順</option>
+          <option value="reg">登録順</option>
+        </select>
+        <select id="master-cat-filter" onchange="renderMasterTable()"
+          style="padding:6px 10px;font-size:13px;border:1px solid #b8d0ea;border-radius:6px;background:#fff;cursor:pointer">
+          <option value="">全カテゴリ</option>
+        </select>
+        <input type="text" id="master-search" placeholder="品名・型番で検索..."
+          style="flex:1;min-width:140px;padding:6px 10px;font-size:13px;border:1px solid #b8d0ea;border-radius:6px;background:#fff"
+          oninput="renderMasterTable()">
+        <span id="master-count" style="font-size:12px;color:#5c7a9e;white-space:nowrap"></span>
+      </div>
       <table class="master-table" id="master-table">
         <thead><tr><th>品名</th><th>型番</th><th>単位</th><th>標準単価</th><th>カテゴリ</th><th></th></tr></thead>
         <tbody id="master-tbody"></tbody>
@@ -473,14 +489,21 @@ window.fbDeleteDoc = deleteDoc;
       <button class="modal-close" onclick="closeMasterSelectModal()">×</button>
     </div>
     <div class="modal-body" style="display:flex;flex-direction:column;gap:12px">
-      <div style="display:flex;gap:8px">
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
         <input type="text" id="ms-search" placeholder="品名・型番で検索..."
-          style="flex:1;padding:10px 12px;font-size:14px;border:2px solid #7bafd4;border-radius:8px;background:#fff;color:#222"
+          style="flex:1;min-width:140px;padding:10px 12px;font-size:14px;border:2px solid #7bafd4;border-radius:8px;background:#fff;color:#222"
           oninput="renderMasterSelectList()">
         <select id="ms-cat-filter"
           style="padding:10px 12px;font-size:14px;border:2px solid #7bafd4;border-radius:8px;background:#fff;color:#222;cursor:pointer"
           onchange="renderMasterSelectList()">
           <option value="">全カテゴリ</option>
+        </select>
+        <select id="ms-sort"
+          style="padding:10px 12px;font-size:14px;border:2px solid #7bafd4;border-radius:8px;background:#fff;color:#222;cursor:pointer"
+          onchange="renderMasterSelectList()">
+          <option value="freq">使用頻度順</option>
+          <option value="kana">五十音順</option>
+          <option value="reg">登録順</option>
         </select>
       </div>
       <div style="font-size:13px;color:#5c7a9e;display:flex;align-items:center;gap:8px">
@@ -1029,11 +1052,17 @@ function closeMasterSelectModal(){
 function renderMasterSelectList(){
   const q = document.getElementById('ms-search').value.trim().toLowerCase();
   const cat = document.getElementById('ms-cat-filter').value;
-  const filtered = masterItems.filter(m=>{
+  const sortVal = document.getElementById('ms-sort')?.value || 'freq';
+  let filtered = masterItems.filter(m=>{
     const matchQ = !q || m.hinmei.toLowerCase().includes(q) || (m.model||'').toLowerCase().includes(q);
     const matchC = !cat || m.cat === cat;
     return matchQ && matchC;
   });
+  if(sortVal==='freq'){
+    filtered = filtered.slice().sort((a,b)=>(usageCount[b.hinmei]||0)-(usageCount[a.hinmei]||0));
+  } else if(sortVal==='kana'){
+    filtered = filtered.slice().sort((a,b)=>a.hinmei.localeCompare(b.hinmei,'ja'));
+  }
 
   const list = document.getElementById('ms-list');
   if(filtered.length === 0){
@@ -1692,11 +1721,43 @@ function deleteMasterItem(idx){
   renderMasterTable();
 }
 function renderMasterTable(){
-  document.getElementById('master-tbody').innerHTML=masterItems.map((m,i)=>`
-    <tr id="mrow-${i}">
+  // カテゴリフィルター更新
+  const catFilter = document.getElementById('master-cat-filter');
+  if(catFilter){
+    const currentCat = catFilter.value;
+    const cats = [...new Set(masterItems.map(m=>m.cat).filter(Boolean))].sort();
+    catFilter.innerHTML = '<option value="">全カテゴリ</option>' +
+      cats.map(c=>`<option value="${esc(c)}" ${c===currentCat?'selected':''}>${esc(c)}</option>`).join('');
+  }
+
+  // 絞り込み
+  const sortVal   = document.getElementById('master-sort')?.value || 'reg';
+  const catVal    = document.getElementById('master-cat-filter')?.value || '';
+  const searchVal = (document.getElementById('master-search')?.value || '').trim().toLowerCase();
+
+  let items = masterItems.map((m,i)=>({...m, _idx:i}));
+  if(catVal)    items = items.filter(m=>m.cat===catVal);
+  if(searchVal) items = items.filter(m=>m.hinmei.toLowerCase().includes(searchVal)||(m.model||'').toLowerCase().includes(searchVal));
+
+  // 並び替え
+  if(sortVal==='freq'){
+    items.sort((a,b)=>(usageCount[b.hinmei]||0)-(usageCount[a.hinmei]||0));
+  } else if(sortVal==='kana'){
+    items.sort((a,b)=>a.hinmei.localeCompare(b.hinmei, 'ja'));
+  }
+  // 登録順はそのまま
+
+  const countEl = document.getElementById('master-count');
+  if(countEl) countEl.textContent = items.length + '件';
+
+  document.getElementById('master-tbody').innerHTML = items.map(m=>{
+    const i = m._idx;
+    const cnt = usageCount[m.hinmei]||0;
+    const badge = cnt>=3 ? `<span style="font-size:10px;background:#e8f5e9;color:#2e7d32;border-radius:4px;padding:1px 5px;margin-left:4px">★${cnt}</span>` : '';
+    return `<tr id="mrow-${i}">
       <td><input type="text" value="${esc(m.hinmei)}"
         style="width:100%;border:1px solid #ddd;border-radius:4px;padding:4px 6px;font-size:12px;background:#fff"
-        onchange="updateMasterItem(${i},'hinmei',this.value)"></td>
+        onchange="updateMasterItem(${i},'hinmei',this.value)">${badge}</td>
       <td><input type="text" value="${esc(m.model||'')}"
         style="width:100%;border:1px solid #ddd;border-radius:4px;padding:4px 6px;font-size:12px;background:#fff"
         onchange="updateMasterItem(${i},'model',this.value)"></td>
@@ -1710,8 +1771,8 @@ function renderMasterTable(){
         style="width:100%;border:1px solid #ddd;border-radius:4px;padding:4px 6px;font-size:12px;background:#fff"
         onchange="updateMasterItem(${i},'cat',this.value)"></td>
       <td><button class="row-btn del btn-sm" onclick="deleteMasterItem(${i})">削除</button></td>
-    </tr>
-  `).join('');
+    </tr>`;
+  }).join('');
 }
 
 function updateMasterItem(i, field, val){
