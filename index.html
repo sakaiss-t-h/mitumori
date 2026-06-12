@@ -322,7 +322,7 @@ window.fbDeleteDoc = deleteDoc;
       </div>
       <div class="form-group">
         <label class="form-label">備考</label>
-        <input class="form-input" id="f-note" type="text" placeholder="任意">
+        <input class="form-input" id="f-note" type="text" placeholder="任意" oninput="renderSheetContent()">
       </div>
     </div>
     <hr class="divider">
@@ -1195,7 +1195,8 @@ function renderSheetContent(){
   const itemCount = sheet.rows.filter(r=>(r.type==='item'&&r.hinmei.trim()) || r.type==='title' || r.type==='blank').length;
   const counter = document.getElementById('row-counter');
   if(counter){
-    const maxRows = currentSheetIdx===0 ? 32 : 42;
+    const noteVal = document.getElementById('f-note')?.value?.trim();
+    const maxRows = currentSheetIdx===0 ? (noteVal ? 31 : 32) : 42;
     counter.textContent = itemCount + ' / ' + maxRows + '行';
     counter.className = 'row-counter' + (itemCount>=maxRows?' full':itemCount>=maxRows-5?' warn':'');
   }
@@ -1310,7 +1311,7 @@ function updateSheetRow(si, ri, field, val){
     if(el){el.textContent=amt===0?'—':fmtNum(amt);el.className=amt===0?'amount-cell zero':'amount-cell';}
     const itemCount=sheets[si].rows.filter(r=>r.type==='item'&&r.hinmei.trim()).length;
     const counter=document.getElementById('row-counter');
-    const maxRows2=currentSheetIdx===0?32:42;if(counter){counter.textContent=itemCount+' / '+maxRows2+'行';counter.className='row-counter'+(itemCount>=maxRows2?' full':itemCount>=maxRows2-5?' warn':'');}
+    const noteVal2=document.getElementById('f-note')?.value?.trim();const maxRows2=currentSheetIdx===0?(noteVal2?31:32):42;if(counter){counter.textContent=itemCount+' / '+maxRows2+'行';counter.className='row-counter'+(itemCount>=maxRows2?' full':itemCount>=maxRows2-5?' warn':'');}
   }
   updateTotal();
 }
@@ -2079,7 +2080,7 @@ function buildPreviewHTML(){
     #preview-content { background:#ccc; padding:12px; }
     .pv-page {
       background:#fff;
-      width:740px; margin:0 auto 12px;
+      width:794px; margin:0 auto 12px;
       font-family:'ＭＳ Ｐゴシック','MS PGothic','Meiryo',sans-serif;
       font-size:12px; color:#1a1a1a;
       padding:30px 44px 30px;
@@ -2189,7 +2190,7 @@ function buildPreviewHTML(){
   /* ── 行振り分け（1ページ目は header 分を引いた行数） ── */
   // 1ページ目: タイトル+宛先+金額+案件情報 で約140px消費 → 約18行入る
   // 続きページ: ほぼ全面明細 → 約30行
-  const ROWS_PAGE1 = 32;   // 1ページ目
+  const ROWS_PAGE1 = note ? 31 : 32;   // 1ページ目（備考あり時は1行減）
   const ROWS_REST  = 42;   // 続きページ
 
   // シートごとに処理（シートの切れ目で必ずページ送り）
@@ -2202,7 +2203,7 @@ function buildPreviewHTML(){
     const sheetLabel = sheets.length > 1 ? `明細　No.${si+1}` : null;
 
     sheet.rows.forEach(r => {
-      const visible = r.type === 'title' || r.type === 'blank' || r.hinmei;
+      const visible = r.type === 'title' || r.type === 'blank' || r.type === 'item';
       if(!visible) return;
       const curLim = pageGroups.length === 0 ? ROWS_PAGE1 : ROWS_REST;
       // カテゴリ行は残り1行以下なら次ページ
@@ -2213,9 +2214,12 @@ function buildPreviewHTML(){
       }
       cur.push(r);
     });
-    if(cur.length || si < sheets.length - 1) {
-      pageGroups.push({rows:cur, sheetLabel: sheetLabel && pageGroups.filter(p=>p.sheetLabel===sheetLabel).length===0 ? sheetLabel : null});
+      // 最終ページを空item行で埋める
+    const pageLim = pageGroups.length === 0 ? ROWS_PAGE1 : ROWS_REST;
+    while(cur.length < pageLim){
+      cur.push({type:'item', hinmei:'', qty:'', unit:'', tanka:'', biko:''});
     }
+    pageGroups.push({rows:cur, sheetLabel: sheetLabel && pageGroups.filter(p=>p.sheetLabel===sheetLabel).length===0 ? sheetLabel : null});
     isFirst = false;
   });
 
@@ -2224,8 +2228,11 @@ function buildPreviewHTML(){
     if(r.type === '_sheetsep') return '';
     if(r.type === 'blank') return `<tr><td colspan="6" style="padding:6px;border-bottom:1px solid #eee">&nbsp;</td></tr>`; // シート区切りはsection-labelで表示
     if(r.type === 'title')     return `<tr class="pv-title-row"><td colspan="6">${esc(r.text||'')}</td></tr>`;
-    if(!r.hinmei) return '';
     const amt = (parseNum(r.qty)||0)*(parseNum(r.tanka)||0);
+    // 品名なし → 空罫線行
+    if(!r.hinmei) return `<tr>
+      <td>&nbsp;</td><td></td><td></td><td></td><td></td><td></td>
+    </tr>`;
     return `<tr>
       <td>${esc(r.hinmei)}</td>
       <td class="pv-num">${r.qty||''}</td>
@@ -2393,10 +2400,10 @@ async function exportPDF(){
 
     const PAGE_W = 210;
     const PAGE_H = 297;
-    const MARGIN_X = 10;
-    const MARGIN_Y = 10;
-    const PRINT_W = PAGE_W - MARGIN_X * 2;
-    const PRINT_H = PAGE_H - MARGIN_Y * 2;
+    const MARGIN_X = 0;
+    const MARGIN_Y = 0;
+    const PRINT_W = PAGE_W;
+    const PRINT_H = PAGE_H;
 
     // pv-page ブロックを1ページ単位としてキャプチャ
     const pages = content.querySelectorAll('.pv-page');
@@ -2409,17 +2416,16 @@ async function exportPDF(){
 
       const el = pages[i];
 
-      // コンテンツ実寸でキャプチャ（余白防止・中央寄せ）
+      // A4幅(794px)固定でキャプチャ
       const elRect = el.getBoundingClientRect();
       const canvas = await html2canvas(el, {
         scale: 2,
         useCORS: true,
         backgroundColor: '#ffffff',
         logging: false,
-        width:  Math.ceil(elRect.width),
-        height: Math.ceil(elRect.height),
-        windowWidth:  document.documentElement.scrollWidth,
-        windowHeight: Math.ceil(elRect.height)
+        width:  794,
+        height: Math.ceil(el.scrollHeight),
+        windowWidth: 794
       });
 
       const imgData = canvas.toDataURL('image/jpeg', 0.93);
@@ -2436,14 +2442,14 @@ async function exportPDF(){
       const drawW = PRINT_W;
       const drawH = naturalH * scale;
 
-      // 中央X座標を計算
-      const xPos = (PAGE_W - PRINT_W) / 2;
-      // 高さがページ内に収まらない場合は縮小
+      // 左右均等余白で中央配置
+      const centerX = (PAGE_W - drawW) / 2;
       if(drawH <= PRINT_H){
-        pdf.addImage(imgData, 'JPEG', xPos, MARGIN_Y, drawW, drawH);
+        pdf.addImage(imgData, 'JPEG', centerX, 0, drawW, drawH);
       } else {
         const shrink = PRINT_H / drawH;
-        pdf.addImage(imgData, 'JPEG', xPos, MARGIN_Y, drawW * shrink, PRINT_H);
+        const shrinkW = drawW * shrink;
+        pdf.addImage(imgData, 'JPEG', (PAGE_W - shrinkW) / 2, 0, shrinkW, PRINT_H);
       }
     }
 
@@ -2501,6 +2507,7 @@ function clearForm(){
   currentEstimateId=null;
   addSheet();
   updateTotal();
+  document.getElementById('estimate-no-input').value = '';  // 一旦クリアして次番を生成
   const nextNo = generateEstimateNo();
   document.getElementById('estimate-no-input').value = nextNo;
   document.getElementById('f-date').value = new Date().toISOString().slice(0,10);
