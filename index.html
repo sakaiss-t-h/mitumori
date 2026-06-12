@@ -438,6 +438,10 @@ window.fbDeleteDoc = deleteDoc;
           <option value="kana">五十音順</option>
           <option value="reg">登録順</option>
         </select>
+        <button class="btn btn-sm" onclick="resetUsageCount()"
+          style="background:#fff3e0;color:#e65100;border:1px solid #ffcc80;font-size:12px;padding:6px 12px">
+          🔄 使用回数リセット
+        </button>
         <select id="master-cat-filter" onchange="renderMasterTable()"
           style="padding:6px 10px;font-size:13px;border:1px solid #b8d0ea;border-radius:6px;background:#fff;cursor:pointer">
           <option value="">全カテゴリ</option>
@@ -1723,12 +1727,19 @@ function renderHistList(q=''){
 }
 
 // ========== 部材マスター ==========
-async function saveMaster(){
+function resetUsageCount(){
+  if(!confirm('使用回数をすべてリセットしますか？')) return;
+  usageCount = {};
+  localStorage.setItem('mitumori_usage', JSON.stringify(usageCount));
+  renderMasterTable();
+  showToast('使用回数をリセットしました');
+}
+
+function saveMaster(){
   localStorage.setItem('mitumori_master', JSON.stringify(masterItems));
   if(window.fbDb && currentUser){
-    try {
-      await window.fbSetDoc(window.fbDoc(window.fbDb,'appdata','master'), {items: masterItems});
-    } catch(e){ console.error('マスター保存エラー:', e); }
+    window.fbSetDoc(window.fbDoc(window.fbDb,'appdata','master'), {items: masterItems})
+      .catch(e => console.error('マスター保存エラー:', e));
   }
 }
 function addMasterItem(){
